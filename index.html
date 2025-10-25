@@ -1,146 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="logo2.png" type="image/png" />
-<title>Hydra Car Racing</title>
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  touch-action: manipulation;
-}
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to bottom, #2c3e50, #4ca1af);
-  color: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.game-container {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  height: 80vh;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-#gameCanvas {
-  background-color: #1a1a2e;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.score-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 8px 15px;
-  border-radius: 20px;
-  z-index: 10;
-}
-.top-score-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 8px 15px;
-  border-radius: 20px;
-  z-index: 10;
-}
-.reset-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 0.9rem;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  z-index: 11;
-  transition: 0.2s;
-}
-.reset-btn:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-.controls {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 500px;
-  margin-top: 20px;
-  padding: 0 20px;
-}
-.control-btn {
-  width: 80px;
-  height: 80px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-.control-btn:active {
-  background-color: rgba(255, 255, 255, 0.4);
-  transform: scale(0.95);
-}
-.game-over {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.game-over h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #e74c3c;
-}
-.game-over p {
-  font-size: 1.5rem;
-  margin-bottom: 30px;
-}
-.restart-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-.restart-btn:active {
-  background-color: #2980b9;
-  transform: scale(0.98);
-}
-.footer {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hydra Car Racing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #2c3e50, #4ca1af);
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 80vh;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #gameCanvas {
+      background-color: #1a1a2e;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .score-container {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .top-score {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 500px;
+      margin-top: 20px;
+      padding: 0 20px;
+      align-items: center;
+    }
+
+    .control-btn {
+      width: 80px;
+      height: 80px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: 0.2s;
+    }
+
+    .control-btn:active {
+      background-color: rgba(255, 255, 255, 0.4);
+      transform: scale(0.95);
+    }
+
+    .game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .game-over h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #e74c3c;
+    }
+
+    .game-over p {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+    }
+
+    .restart-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 15px;
+    }
+
+    .reset-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-height: 700px) {
+      .controls {
+        margin-top: 10px;
+      }
+      .control-btn {
+        width: 70px;
+        height: 70px;
+      }
+    }
+    .footer {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 5px;
@@ -149,238 +164,235 @@ body {
   font-size: 1rem;
   color: #000000;
 }
-@media (max-height: 700px) {
-  .controls {
-    margin-top: 10px;
-  }
-  .control-btn {
-    width: 70px;
-    height: 70px;
-  }
-}
-</style>
+  </style>
 </head>
 <body>
-<h1>Hydra Car Racing</h1>
+  <h1>Hydra Car Racing</h1>
 
-<div  
-class="game-container">
-  <div class="score-container">Score: <span id="score">0</span></div>
-  <div class="top-score-container">Top: <span id="topScore">0</span></div>
-  <button class="reset-btn" id="resetTopBtn">Reset Top Score</button>
-  <canvas id="gameCanvas"></canvas>
+  <div class="game-container">
+    <div class="score-container">Score: <span id="score">0</span></div>
+    <div class="top-score">Top: <span id="topScore">0</span></div>
+    <canvas id="gameCanvas"></canvas>
 
-  <div class="game-over" id="gameOverScreen">
-    <h2>Game Over!</h2>
-    <h2>Car Crashed</h2>
-    <p>Your Score: <span id="finalScore">0</span></p>
-    <button class="restart-btn" id="restartBtn">Play Again</button>
+    <div class="game-over" id="gameOverScreen">
+      <h2>Game Over!</h2>
+      <p>Your Score: <span id="finalScore">0</span></p>
+      <button class="restart-btn" id="restartBtn">Play Again</button>
+      <button class="reset-btn" id="resetTopScoreBtn">Reset Top Score</button>
+    </div>
   </div>
-</div>
 
-<div class="controls">
-  <div class="control-btn" id="leftBtn">←</div>
-  <div class="control-btn" id="rightBtn">→</div>
-</div>
-
+  <div class="controls">
+    <div class="control-btn" id="leftBtn"><i class="fa-solid fa-arrow-left"></i></div>
+    <div class="control-btn" id="playPauseBtn"><i class="fa-solid fa-play"></i></div>
+    <div class="control-btn" id="rightBtn"><i class="fa-solid fa-arrow-right"></i></div>
+  </div>
 <p class="footer">&copy; 2025 Hydra. All Rights Reserved</p>
 
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const scoreElement = document.getElementById('score');
-const topScoreElement = document.getElementById('topScore');
-const finalScoreElement = document.getElementById('finalScore');
-const gameOverScreen = document.getElementById('gameOverScreen');
-const restartBtn = document.getElementById('restartBtn');
-const leftBtn = document.getElementById('leftBtn');
-const rightBtn = document.getElementById('rightBtn');
-const resetTopBtn = document.getElementById('resetTopBtn');
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const topScoreElement = document.getElementById('topScore');
+    const finalScoreElement = document.getElementById('finalScore');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const restartBtn = document.getElementById('restartBtn');
+    const resetTopScoreBtn = document.getElementById('resetTopScoreBtn');
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playIcon = playPauseBtn.querySelector('i');
 
-function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-// Load top score from localStorage
-let topScore = localStorage.getItem('hydraTopScore') || 0;
-topScoreElement.textContent = topScore;
-
-let game = {
-  running: false,
-  score: 0,
-  speed: 3,
-  roadWidth: canvas.width * 0.6,
-  roadX: (canvas.width - canvas.width * 0.6) / 2,
-  laneCount: 3,
-  currentLane: 1,
-  carWidth: canvas.width * 0.1,
-  carHeight: canvas.width * 0.15,
-  carX: 0,
-  carY: 0,
-  obstacles: [],
-  lastObstacleTime: 0,
-  roadMarkings: [],
-  lastRoadMarkingTime: 0
-};
-
-function initCar() {
-  const laneWidth = game.roadWidth / game.laneCount;
-  game.carX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
-  game.carY = canvas.height - game.carHeight - 20;
-}
-
-function drawRoad() {
-  ctx.fillStyle = '#555';
-  ctx.fillRect(game.roadX, 0, game.roadWidth, canvas.height);
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([20, 20]);
-  for (const m of game.roadMarkings) {
-    ctx.beginPath();
-    ctx.moveTo(game.roadX + game.roadWidth / 2, m.y);
-    ctx.lineTo(game.roadX + game.roadWidth / 2, m.y + 20);
-    ctx.stroke();
-  }
-  ctx.setLineDash([]);
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(game.roadX, 0); ctx.lineTo(game.roadX, canvas.height); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(game.roadX + game.roadWidth, 0); ctx.lineTo(game.roadX + game.roadWidth, canvas.height); ctx.stroke();
-}
-
-function drawCar() {
-  ctx.fillStyle = '#e74c3c';
-  ctx.fillRect(game.carX, game.carY, game.carWidth, game.carHeight);
-  ctx.fillStyle = '#3498db';
-  ctx.fillRect(game.carX + 5, game.carY + 5, game.carWidth - 10, game.carHeight * 0.3);
-  ctx.fillStyle = '#2c3e50';
-  ctx.fillRect(game.carX - 3, game.carY + 5, 5, game.carHeight * 0.2);
-  ctx.fillRect(game.carX + game.carWidth - 2, game.carY + 5, 5, game.carHeight * 0.2);
-  ctx.fillRect(game.carX - 3, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
-  ctx.fillRect(game.carX + game.carWidth - 2, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
-}
-
-function drawObstacles() {
-  ctx.fillStyle = '#f39c12';
-  for (const o of game.obstacles) ctx.fillRect(o.x, o.y, o.width, o.height);
-}
-
-function update() {
-  if (!game.running) return;
-  const laneWidth = game.roadWidth / game.laneCount;
-  const targetX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
-  game.carX += (targetX - game.carX) * 0.1;
-  const t = Date.now();
-  if (t - game.lastRoadMarkingTime > 500) {
-    game.roadMarkings.push({ y: 0 });
-    game.lastRoadMarkingTime = t;
-  }
-  for (const m of game.roadMarkings) m.y += game.speed;
-  game.roadMarkings = game.roadMarkings.filter(m => m.y < canvas.height);
-  if (t - game.lastObstacleTime > 1500 - Math.min(game.score * 10, 1000)) {
-    const lane = Math.floor(Math.random() * game.laneCount);
-    const lw = laneWidth * 0.8;
-    const ox = game.roadX + lane * laneWidth + (laneWidth - lw) / 2;
-    game.obstacles.push({ x: ox, y: -50, width: lw, height: game.carHeight * 0.8 });
-    game.lastObstacleTime = t;
-  }
-  for (const o of game.obstacles) {
-    o.y += game.speed;
-    if (o.y + o.height > game.carY &&
-        o.y < game.carY + game.carHeight &&
-        o.x + o.width > game.carX &&
-        o.x < game.carX + game.carWidth) return gameOver();
-  }
-  game.obstacles = game.obstacles.filter(o => o.y < canvas.height);
-  game.score += 0.1;
-  scoreElement.textContent = Math.floor(game.score);
-  game.speed = 3 + Math.floor(game.score / 10) * 0.5;
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawRoad();
-  drawObstacles();
-  drawCar();
-}
-
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-function startGame() {
-  game.running = true;
-  game.score = 0;
-  game.speed = 3;
-  game.currentLane = 1;
-  game.obstacles = [];
-  game.roadMarkings = [];
-  game.lastObstacleTime = 0;
-  game.lastRoadMarkingTime = 0;
-  initCar();
-  gameOverScreen.style.display = 'none';
-  scoreElement.textContent = '0';
-}
-
-function gameOver() {
-  game.running = false;
-  finalScoreElement.textContent = Math.floor(game.score);
-  
-  // Save new top score if higher
-  if (game.score > topScore) {
-    topScore = Math.floor(game.score);
-    localStorage.setItem('hydraTopScore', topScore);
+    let topScore = localStorage.getItem('hydra_top_score') || 0;
     topScoreElement.textContent = topScore;
-  }
-  
-  gameOverScreen.style.display = 'flex';
-}
 
-// TOUCH
-leftBtn.addEventListener('touchstart', () => {
-  if (game.running && game.currentLane > 0) game.currentLane--;
-});
-rightBtn.addEventListener('touchstart', () => {
-  if (game.running && game.currentLane < game.laneCount - 1) game.currentLane++;
-});
+    let game = {
+      running: false,
+      score: 0,
+      speed: 3,
+      roadWidth: canvas.width * 0.6,
+      roadX: (canvas.width - canvas.width * 0.6) / 2,
+      laneCount: 3,
+      currentLane: 1,
+      carWidth: canvas.width * 0.1,
+      carHeight: canvas.width * 0.15,
+      carX: 0,
+      carY: 0,
+      obstacles: [],
+      lastObstacleTime: 0,
+      roadMarkings: [],
+      lastRoadMarkingTime: 0
+    };
 
-// MOUSE
-leftBtn.addEventListener('mousedown', () => {
-  if (game.running && game.currentLane > 0) game.currentLane--;
-});
-rightBtn.addEventListener('mousedown', () => {
-  if (game.running && game.currentLane < game.laneCount - 1) game.currentLane++;
-});
+    function initCar() {
+      const laneWidth = game.roadWidth / game.laneCount;
+      game.carX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
+      game.carY = canvas.height - game.carHeight - 20;
+    }
 
-// KEYBOARD
-window.addEventListener('keydown', (e) => {
-  if (!game.running) return;
-  if (['ArrowLeft', 'a', 'A'].includes(e.key) && game.currentLane > 0)
-    game.currentLane--;
-  if (['ArrowRight', 'd', 'D'].includes(e.key) && game.currentLane < game.laneCount - 1)
-    game.currentLane++;
-});
+    function drawRoad() {
+      ctx.fillStyle = '#555';
+      ctx.fillRect(game.roadX, 0, game.roadWidth, canvas.height);
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([20, 20]);
+      for (const marking of game.roadMarkings) {
+        ctx.beginPath();
+        ctx.moveTo(game.roadX + game.roadWidth / 2, marking.y);
+        ctx.lineTo(game.roadX + game.roadWidth / 2, marking.y + 20);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(game.roadX, 0); ctx.lineTo(game.roadX, canvas.height); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(game.roadX + game.roadWidth, 0); ctx.lineTo(game.roadX + game.roadWidth, canvas.height); ctx.stroke();
+    }
 
-// Reset top score
-resetTopBtn.addEventListener('click', () => {
-  localStorage.removeItem('hydraTopScore');
-  topScore = 0;
-  topScoreElement.textContent = 0;
-});
+    function drawCar() {
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(game.carX, game.carY, game.carWidth, game.carHeight);
+      ctx.fillStyle = '#3498db';
+      ctx.fillRect(game.carX + 5, game.carY + 5, game.carWidth - 10, game.carHeight * 0.3);
+      ctx.fillStyle = '#2c3e50';
+      ctx.fillRect(game.carX - 3, game.carY + 5, 5, game.carHeight * 0.2);
+      ctx.fillRect(game.carX + game.carWidth - 2, game.carY + 5, 5, game.carHeight * 0.2);
+      ctx.fillRect(game.carX - 3, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
+      ctx.fillRect(game.carX + game.carWidth - 2, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
+    }
 
-// Restart
-restartBtn.addEventListener('click', startGame);
+    function drawObstacles() {
+      ctx.fillStyle = '#f39c12';
+      for (const o of game.obstacles) ctx.fillRect(o.x, o.y, o.width, o.height);
+    }
 
-canvas.addEventListener('contextmenu', e => e.preventDefault());
+    function update() {
+      if (!game.running) return;
+      const laneWidth = game.roadWidth / game.laneCount;
+      const targetX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
+      game.carX += (targetX - game.carX) * 0.1;
+      const now = Date.now();
 
-initCar();
-gameLoop();
-startGame();
-</script>
+      if (now - game.lastRoadMarkingTime > 500) {
+        game.roadMarkings.push({ y: 0 });
+        game.lastRoadMarkingTime = now;
+      }
+      for (const m of game.roadMarkings) m.y += game.speed;
+      game.roadMarkings = game.roadMarkings.filter(m => m.y < canvas.height);
+
+      if (now - game.lastObstacleTime > 1500 - Math.min(game.score * 10, 1000)) {
+        const lane = Math.floor(Math.random() * game.laneCount);
+        const w = laneWidth * 0.8;
+        const x = game.roadX + lane * laneWidth + (laneWidth - w) / 2;
+        game.obstacles.push({ x, y: -50, width: w, height: game.carHeight * 0.8 });
+        game.lastObstacleTime = now;
+      }
+      for (const o of game.obstacles) {
+        o.y += game.speed;
+        if (o.y + o.height > game.carY &&
+            o.y < game.carY + game.carHeight &&
+            o.x + o.width > game.carX &&
+            o.x < game.carX + game.carWidth)
+          return gameOver();
+      }
+      game.obstacles = game.obstacles.filter(o => o.y < canvas.height);
+      game.score += 0.1;
+      scoreElement.textContent = Math.floor(game.score);
+      game.speed = 3 + Math.floor(game.score / 10) * 0.5;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawRoad();
+      drawObstacles();
+      drawCar();
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function startGame() {
+      game.running = true;
+      playIcon.className = "fa-solid fa-pause";
+    }
+
+    function pauseGame() {
+      game.running = false;
+      playIcon.className = "fa-solid fa-play";
+    }
+
+    function togglePlayPause() {
+      game.running ? pauseGame() : startGame();
+    }
+
+    function gameOver() {
+      game.running = false;
+      playIcon.className = "fa-solid fa-play";
+      const finalScore = Math.floor(game.score);
+      finalScoreElement.textContent = finalScore;
+      if (finalScore > topScore) {
+        topScore = finalScore;
+        localStorage.setItem('hydra_top_score', topScore);
+        topScoreElement.textContent = topScore;
+      }
+      gameOverScreen.style.display = 'flex';
+    }
+
+    // Movement
+    function moveLeft() {
+      if (game.running && game.currentLane > 0) game.currentLane--;
+    }
+    function moveRight() {
+      if (game.running && game.currentLane < game.laneCount - 1) game.currentLane++;
+    }
+
+    // Touch + Mouse
+    leftBtn.addEventListener('touchstart', moveLeft);
+    rightBtn.addEventListener('touchstart', moveRight);
+    leftBtn.addEventListener('mousedown', moveLeft);
+    rightBtn.addEventListener('mousedown', moveRight);
+    playPauseBtn.addEventListener('click', togglePlayPause);
+
+    // Keyboard
+    window.addEventListener('keydown', (e) => {
+      if (!game.running) return;
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) moveLeft();
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) moveRight();
+    });
+
+    restartBtn.addEventListener('click', () => {
+      game.score = 0;
+      game.speed = 3;
+      game.obstacles = [];
+      game.roadMarkings = [];
+      game.lastObstacleTime = 0;
+      game.lastRoadMarkingTime = 0;
+      game.currentLane = 1;
+      scoreElement.textContent = '0';
+      gameOverScreen.style.display = 'none';
+      initCar();
+      startGame();
+    });
+
+    resetTopScoreBtn.addEventListener('click', () => {
+      localStorage.removeItem('hydra_top_score');
+      topScore = 0;
+      topScoreElement.textContent = '0';
+    });
+
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+    initCar();
+    loop();
+    pauseGame(); // Game paused on load
+  </script>
 </body>
 </html>
