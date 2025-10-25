@@ -232,7 +232,7 @@ h1{
       speed: 3,
       roadWidth: canvas.width * 0.6,
       roadX: (canvas.width - canvas.width * 0.6) / 2,
-      laneCount: 3,
+      laneCount: 4,
       currentLane: 1,
       carWidth: canvas.width * 0.1,
       carHeight: canvas.width * 0.15,
@@ -317,7 +317,7 @@ h1{
       game.obstacles = game.obstacles.filter(o => o.y < canvas.height);
       game.score += 0.1;
       scoreElement.textContent = Math.floor(game.score);
-      game.speed = 3 + Math.floor(game.score / 10) * 0.5;
+      game.speed = 3 + Math.floor(game.score / 10) * 0.2;
     }
 
     function draw() {
