@@ -146,7 +146,7 @@
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
     }
 
-    @media (max-height: 700px) {
+    @media (max-width: 400px) {
       .controls {
         margin-top: 10px;
       }
@@ -154,6 +154,15 @@
         width: 70px;
         height: 70px;
       }
+      .game-container {
+      position: relative;
+      width: 80%;
+      max-width: 500px;
+      height: 80vh;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
     }
     .footer {
   text-align: center;
@@ -356,8 +365,7 @@
     }
 
     // Touch + Mouse
-    leftBtn.addEventListener('touchstart', moveLeft);
-    rightBtn.addEventListener('touchstart', moveRight);
+   
     leftBtn.addEventListener('mousedown', moveLeft);
     rightBtn.addEventListener('mousedown', moveRight);
     playPauseBtn.addEventListener('click', togglePlayPause);
