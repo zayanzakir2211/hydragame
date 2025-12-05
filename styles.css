@@ -7,9 +7,9 @@
 
 body {
   font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 75%, #16213e 100%);
+  background: linear-gradient(135deg, #0a0a15 0%, #0d1525 25%, #0a1a35 50%, #0d1020 75%, #0a0a15 100%);
   background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
+  animation: gradientShift 25s ease infinite;
   color: white;
   min-height: 100vh;
   display: flex;
@@ -27,11 +27,30 @@ body::before {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 80%, rgba(100, 200, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 100, 200, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(150, 100, 255, 0.05) 0%, transparent 40%);
+    radial-gradient(circle at 20% 80%, rgba(0, 200, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 50, 150, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(100, 50, 255, 0.04) 0%, transparent 40%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* Scanline effect for AAA feel */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
 }
 
 @keyframes gradientShift {
@@ -39,45 +58,45 @@ body::before {
   50% { background-position: 100% 50%; }
 }
 
-/* Floating orbs for depth */
+/* Floating orbs for depth - more subtle */
 .orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.4;
+  filter: blur(80px);
+  opacity: 0.25;
   pointer-events: none;
   z-index: 0;
 }
 
 .orb-1 {
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(135deg, rgba(100, 200, 255, 0.3), rgba(150, 100, 255, 0.2));
-  top: -150px;
-  left: -150px;
-  animation: float1 12s ease-in-out infinite;
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, rgba(0, 150, 255, 0.4), rgba(100, 50, 255, 0.2));
+  top: -200px;
+  left: -200px;
+  animation: float1 15s ease-in-out infinite;
 }
 
 .orb-2 {
-  width: 300px;
-  height: 300px;
-  background: linear-gradient(135deg, rgba(255, 100, 200, 0.25), rgba(255, 150, 100, 0.2));
-  bottom: 5%;
-  right: -100px;
-  animation: float2 15s ease-in-out infinite;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, rgba(255, 50, 150, 0.3), rgba(255, 100, 50, 0.2));
+  bottom: -5%;
+  right: -150px;
+  animation: float2 18s ease-in-out infinite;
 }
 
 .orb-3 {
-  width: 200px;
-  height: 200px;
-  background: linear-gradient(135deg, rgba(100, 255, 200, 0.2), rgba(100, 200, 255, 0.15));
-  top: 40%;
-  left: 5%;
-  animation: float3 18s ease-in-out infinite;
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, rgba(0, 255, 200, 0.25), rgba(0, 200, 255, 0.15));
+  top: 45%;
+  left: 3%;
+  animation: float3 20s ease-in-out infinite;
 }
 
 .orb-4 {
-  width: 250px;
+  width: 300px;
   height: 250px;
   background: linear-gradient(135deg, rgba(255, 200, 100, 0.2), rgba(255, 100, 150, 0.15));
   top: 20%;
@@ -172,26 +191,28 @@ h1 {
   max-width: 480px;
   height: 68vh;
   overflow: hidden;
-  border-radius: 35px;
+  border-radius: 30px;
   z-index: 10;
   
-  /* Liquid Glass Effect */
+  /* Premium Glass Effect */
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+    145deg,
+    rgba(20, 20, 35, 0.95) 0%,
+    rgba(15, 15, 25, 0.98) 50%,
+    rgba(10, 10, 20, 0.99) 100%
   );
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
   
-  /* Glass border */
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  /* Neon glow border */
+  border: 2px solid transparent;
+  background-clip: padding-box;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 25px 80px -15px rgba(0, 0, 0, 0.4),
-    0 0 120px rgba(100, 200, 255, 0.1);
+    0 0 0 2px rgba(0, 200, 255, 0.3),
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(0, 150, 255, 0.15),
+    0 0 120px rgba(100, 50, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .game-container::before {
@@ -200,15 +221,40 @@ h1 {
   top: 0;
   left: 0;
   right: 0;
-  height: 40%;
+  height: 50%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.05) 0%,
     transparent 100%
   );
-  border-radius: 35px 35px 0 0;
+  border-radius: 30px 30px 0 0;
   pointer-events: none;
   z-index: 5;
+}
+
+/* Corner accent lights */
+.game-container::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 32px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 200, 0.4) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgba(255, 0, 150, 0.3) 100%
+  );
+  z-index: -1;
+  animation: borderGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes borderGlow {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 #gameCanvas {
@@ -216,23 +262,24 @@ h1 {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 35px;
+  border-radius: 30px;
 }
 
-/* Glass UI Elements */
+/* Premium Glass UI Elements */
 .glass-panel {
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 100%
+    145deg,
+    rgba(20, 15, 35, 0.85) 0%,
+    rgba(15, 10, 30, 0.9) 100%
   );
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(100, 200, 255, 0.15);
   border-radius: 16px;
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    0 0 15px rgba(100, 200, 255, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .score-container {
@@ -246,10 +293,13 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
 }
 
 .score-container .icon {
   font-size: 1rem;
+  filter: drop-shadow(0 0 6px rgba(0, 200, 255, 0.5));
 }
 
 .top-score {
@@ -263,11 +313,15 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: rgba(255, 215, 0, 0.9);
+  text-shadow: 0 0 10px rgba(255, 200, 0, 0.3);
+  border-color: rgba(255, 200, 0, 0.2);
 }
 
 .top-score .icon {
   font-size: 1rem;
   animation: crownPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.6));
 }
 
 @keyframes crownPulse {
@@ -288,6 +342,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-color: rgba(100, 200, 255, 0.1);
 }
 
 .stat-item {
@@ -298,11 +353,15 @@ h1 {
 
 .stat-item .stat-icon {
   font-size: 0.9rem;
+  filter: drop-shadow(0 0 4px rgba(100, 200, 255, 0.4));
 }
 
 .stat-value {
   font-weight: 700;
-  color: #64c8ff;
+  background: linear-gradient(135deg, #00d4ff, #64ff8a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Coin counter */
@@ -317,13 +376,17 @@ h1 {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 180, 0, 0.1) 100%);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: linear-gradient(145deg, rgba(40, 30, 10, 0.8) 0%, rgba(30, 25, 10, 0.85) 100%);
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  box-shadow: 
+    0 0 15px rgba(255, 200, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .coins-display .coin-icon {
   font-size: 1rem;
   animation: coinSpin 3s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.6));
 }
 
 @keyframes coinSpin {
@@ -343,8 +406,9 @@ h1 {
   display: none;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, rgba(255, 100, 150, 0.25) 0%, rgba(255, 50, 100, 0.15) 100%);
+  background: linear-gradient(145deg, rgba(60, 20, 30, 0.85) 0%, rgba(40, 15, 25, 0.9) 100%);
   border: 1px solid rgba(255, 100, 150, 0.4);
+  box-shadow: 0 0 15px rgba(255, 100, 150, 0.2);
   animation: comboGlow 0.5s ease-in-out infinite alternate;
 }
 
@@ -353,8 +417,83 @@ h1 {
 }
 
 @keyframes comboGlow {
-  from { box-shadow: 0 0 10px rgba(255, 100, 150, 0.3); }
-  to { box-shadow: 0 0 20px rgba(255, 100, 150, 0.5); }
+  from { box-shadow: 0 0 15px rgba(255, 100, 150, 0.3); }
+  to { box-shadow: 0 0 25px rgba(255, 100, 150, 0.5), 0 0 40px rgba(255, 50, 100, 0.2); }
+}
+
+/* Nitro Bar */
+.nitro-bar-container {
+  position: absolute;
+  top: 140px;
+  left: 12px;
+  right: 12px;
+  padding: 8px 12px;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(145deg, rgba(30, 20, 10, 0.85) 0%, rgba(20, 15, 10, 0.9) 100%);
+  border: 1px solid rgba(255, 150, 50, 0.3);
+  box-shadow: 0 0 15px rgba(255, 150, 50, 0.15);
+}
+
+.nitro-bar-container.active {
+  display: flex;
+}
+
+.nitro-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 200, 100, 0.9);
+}
+
+.nitro-icon {
+  animation: flameFlicker 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes flameFlicker {
+  0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+  100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+
+.nitro-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 150, 50, 0.2);
+}
+
+.nitro-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ff4000, #ff8000, #ffcc00, #fff);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 150, 50, 0.6), 0 0 20px rgba(255, 100, 0, 0.4);
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+.nitro-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6));
+  animation: nitroShine 0.5s ease-in-out infinite;
+}
+
+@keyframes nitroShine {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 /* Power-up indicator */
@@ -412,20 +551,21 @@ h1 {
   position: relative;
   overflow: hidden;
   
-  /* Liquid Glass Button */
+  /* Neon Glass Button */
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    145deg,
+    rgba(30, 30, 50, 0.9) 0%,
+    rgba(20, 20, 40, 0.95) 100%
   );
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(0, 200, 255, 0.3);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 -2px 10px rgba(255, 255, 255, 0.05) inset;
+    0 0 15px rgba(0, 200, 255, 0.2),
+    0 0 30px rgba(0, 200, 255, 0.1),
+    0 8px 25px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 10px rgba(0, 200, 255, 0.1);
   
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -439,7 +579,7 @@ h1 {
   height: 50%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.1) 0%,
     transparent 100%
   );
   border-radius: 50% 50% 0 0;
@@ -461,9 +601,12 @@ h1 {
 
 .control-btn:active {
   transform: scale(0.9);
+  border-color: rgba(0, 255, 200, 0.6);
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+    0 0 20px rgba(0, 255, 200, 0.4),
+    0 0 40px rgba(0, 255, 200, 0.2),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(0, 255, 200, 0.2);
 }
 
 .control-btn:active::after {
@@ -474,7 +617,7 @@ h1 {
 .control-btn i {
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 0 8px rgba(0, 200, 255, 0.5)) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 #playPauseBtn {
@@ -482,23 +625,36 @@ h1 {
   height: 80px;
   font-size: 1.8rem;
   background: linear-gradient(
-    135deg,
-    rgba(100, 200, 255, 0.35) 0%,
-    rgba(150, 100, 255, 0.25) 50%,
-    rgba(255, 100, 200, 0.15) 100%
+    145deg,
+    rgba(40, 20, 60, 0.95) 0%,
+    rgba(30, 15, 50, 0.98) 100%
   );
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  animation: pulseGlow 3s ease-in-out infinite;
+  border: 2px solid rgba(200, 100, 255, 0.4);
+  box-shadow: 
+    0 0 20px rgba(200, 100, 255, 0.3),
+    0 0 40px rgba(200, 100, 255, 0.15),
+    0 8px 25px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 10px rgba(200, 100, 255, 0.15);
+  animation: playBtnGlow 3s ease-in-out infinite;
 }
 
-@keyframes pulseGlow {
+@keyframes playBtnGlow {
   0%, 100% { 
-    box-shadow: 0 8px 32px rgba(100, 200, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-    border-color: rgba(100, 200, 255, 0.4);
+    box-shadow: 
+      0 0 20px rgba(200, 100, 255, 0.3),
+      0 0 40px rgba(200, 100, 255, 0.15),
+      0 8px 25px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-color: rgba(200, 100, 255, 0.4);
   }
   50% { 
-    box-shadow: 0 8px 45px rgba(150, 100, 255, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-    border-color: rgba(150, 100, 255, 0.5);
+    box-shadow: 
+      0 0 30px rgba(100, 200, 255, 0.4),
+      0 0 60px rgba(100, 200, 255, 0.2),
+      0 8px 30px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: rgba(100, 200, 255, 0.5);
   }
 }
 
@@ -554,33 +710,53 @@ h1 {
   align-items: center;
   justify-content: center;
   z-index: 100;
-  border-radius: 35px;
+  border-radius: 30px;
   
-  /* Frosted glass overlay */
+  /* Premium dark glass overlay */
   background: linear-gradient(
     135deg,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(30, 30, 60, 0.8) 100%
+    rgba(5, 5, 15, 0.9) 0%,
+    rgba(20, 10, 40, 0.92) 50%,
+    rgba(10, 5, 25, 0.95) 100%
   );
-  backdrop-filter: blur(40px) saturate(150%);
-  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+}
+
+.game-over::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(255, 50, 100, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(100, 50, 255, 0.1) 0%, transparent 40%);
+  pointer-events: none;
+  border-radius: 30px;
 }
 
 .game-over-content {
   text-align: center;
-  padding: 35px 40px;
-  border-radius: 30px;
+  padding: 40px 45px;
+  border-radius: 25px;
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.04) 100%
+    145deg,
+    rgba(30, 20, 50, 0.9) 0%,
+    rgba(20, 15, 40, 0.95) 100%
   );
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(200, 100, 255, 0.2);
+  box-shadow: 
+    0 0 30px rgba(200, 100, 255, 0.15),
+    0 0 60px rgba(100, 50, 255, 0.1),
+    0 25px 80px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   max-width: 90%;
+  position: relative;
 }
 
 @keyframes slideUp {
@@ -595,15 +771,16 @@ h1 {
 }
 
 .game-over h2 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 8px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #ff6b6b, #ffa500, #ff6b6b);
-  background-size: 200% 200%;
-  animation: gradientText 2s ease infinite;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff4080, #ff8040, #ffcc00, #ff4080);
+  background-size: 300% 300%;
+  animation: gradientText 3s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 0 40px rgba(255, 100, 100, 0.3);
 }
 
 @keyframes gradientText {
@@ -616,9 +793,10 @@ h1 {
   justify-content: center;
   gap: 25px;
   margin: 20px 0;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.2);
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.4) 0%, rgba(20, 10, 30, 0.5) 100%);
   border-radius: 15px;
+  border: 1px solid rgba(100, 200, 255, 0.1);
 }
 
 .stats-summary .stat {
@@ -630,12 +808,17 @@ h1 {
   opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .stats-summary .stat-value {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #64c8ff;
+  background: linear-gradient(135deg, #00d4ff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(0, 200, 255, 0.3));
 }
 
 .game-over p {
@@ -648,12 +831,12 @@ h1 {
 .game-over-buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .restart-btn, .reset-btn {
   border: none;
-  padding: 14px 32px;
+  padding: 16px 36px;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 50px;
@@ -671,17 +854,24 @@ h1 {
 .restart-btn {
   background: linear-gradient(
     135deg,
-    rgba(100, 200, 255, 0.5) 0%,
-    rgba(100, 150, 255, 0.4) 100%
+    rgba(0, 200, 255, 0.3) 0%,
+    rgba(100, 50, 255, 0.3) 100%
   );
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 25px rgba(100, 150, 255, 0.25);
+  border: 2px solid rgba(0, 200, 255, 0.4);
+  box-shadow: 
+    0 0 20px rgba(0, 200, 255, 0.2),
+    0 0 40px rgba(100, 50, 255, 0.1),
+    0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .restart-btn:hover, .restart-btn:active {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 12px 35px rgba(100, 150, 255, 0.35);
+  border-color: rgba(0, 255, 200, 0.6);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 200, 0.3),
+    0 0 60px rgba(100, 50, 255, 0.2),
+    0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 .reset-btn {

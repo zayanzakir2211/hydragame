@@ -1,5 +1,6 @@
 // ============================================
-// HYDRA RACING - Complete Game Engine v2.0
+// HYDRA RACING - AAA Game Engine v3.0
+// Ultra HD Graphics Edition
 // ============================================
 
 // Game Configuration
@@ -9,39 +10,60 @@ const CONFIG = {
   laneWidth: 0,
   
   // Player
-  playerWidth: 40,
-  playerHeight: 75,
+  playerWidth: 45,
+  playerHeight: 85,
   playerSpeed: 8,
   
   // Enemies
-  enemyWidth: 40,
-  enemyHeight: 75,
+  enemyWidth: 45,
+  enemyHeight: 85,
   initialEnemySpeed: 4,
   maxEnemySpeed: 12,
   enemySpawnRate: 1500,
   minEnemySpawnRate: 600,
   
   // Coins
-  coinSize: 30,
+  coinSize: 28,
   coinValue: 10,
   coinSpawnRate: 2000,
   
   // Power-ups
-  powerUpSize: 40,
+  powerUpSize: 38,
   powerUpSpawnRate: 8000,
   shieldDuration: 5000,
   magnetDuration: 7000,
   slowMoDuration: 5000,
   doublePointsDuration: 10000,
+  nitroDuration: 3000,
   
   // Game
   speedIncreaseRate: 0.0005,
   comboTimeout: 2000,
   difficultyIncreaseInterval: 5000,
   
-  // Visual
+  // Visual Effects
   roadMarkingSpeed: 5,
-  starCount: 50,
+  starCount: 80,
+  enableMotionBlur: true,
+  enableLensFlare: true,
+  enableParticles: true,
+  enableReflections: true,
+};
+
+// Visual Effects State
+const visualFX = {
+  screenShake: 0,
+  screenShakeIntensity: 0,
+  motionBlur: 0,
+  nitroActive: false,
+  nitroEndTime: 0,
+  speedLines: [],
+  exhaustParticles: [],
+  sparkParticles: [],
+  dustParticles: [],
+  lensFlares: [],
+  ambientLight: 1.0,
+  time: 0,
 };
 
 // Game State
@@ -65,6 +87,7 @@ const gameState = {
   hasMagnet: false,
   hasSlowMo: false,
   hasDoublePoints: false,
+  hasNitro: false,
   activePowerUp: null,
   powerUpEndTime: 0,
 };
@@ -116,6 +139,7 @@ const POWER_UP_TYPES = {
   MAGNET: { icon: '🧲', color: 'rgba(255, 100, 200, 0.8)', name: 'Magnet' },
   SLOW_MO: { icon: '⏱️', color: 'rgba(100, 200, 255, 0.8)', name: 'Slow Mo' },
   DOUBLE_POINTS: { icon: '✨', color: 'rgba(255, 215, 0, 0.8)', name: '2x Points' },
+  NITRO: { icon: '🔥', color: 'rgba(255, 100, 0, 0.8)', name: 'Nitro Boost' },
 };
 
 // ============================================
@@ -294,6 +318,12 @@ function moveLeft() {
   if (inputState.targetLane > 0) {
     inputState.targetLane--;
     playSound('whoosh');
+    
+    // AAA Effect: Spawn dust/tire smoke when changing lanes
+    if (player && CONFIG.enableParticles) {
+      spawnDustParticle(player.x + player.width, player.y + player.height - 10, 1);
+      spawnDustParticle(player.x + player.width, player.y + 20, 1);
+    }
   }
 }
 
@@ -302,6 +332,12 @@ function moveRight() {
   if (inputState.targetLane < CONFIG.lanes - 1) {
     inputState.targetLane++;
     playSound('whoosh');
+    
+    // AAA Effect: Spawn dust/tire smoke when changing lanes
+    if (player && CONFIG.enableParticles) {
+      spawnDustParticle(player.x, player.y + player.height - 10, -1);
+      spawnDustParticle(player.x, player.y + 20, -1);
+    }
   }
 }
 
@@ -407,6 +443,12 @@ function gameOver() {
   // Create explosion particles
   createExplosion(player.x + player.width / 2, player.y + player.height / 2);
   
+  // AAA Effects - Screen shake and sparks
+  triggerScreenShake(15);
+  for (let i = 0; i < 10; i++) {
+    spawnSparkParticle(player.x + player.width / 2, player.y + player.height / 2);
+  }
+  
   playSound('crash');
   
   // Vibrate on mobile
@@ -433,6 +475,7 @@ function restartGame() {
   gameState.hasMagnet = false;
   gameState.hasSlowMo = false;
   gameState.hasDoublePoints = false;
+  gameState.hasNitro = false;
   gameState.activePowerUp = null;
   
   // Clear objects
@@ -440,6 +483,14 @@ function restartGame() {
   coins = [];
   powerUps = [];
   particles = [];
+  
+  // Reset visual effects
+  visualFX.exhaustParticles = [];
+  visualFX.sparkParticles = [];
+  visualFX.dustParticles = [];
+  visualFX.speedLines = [];
+  visualFX.screenShake = 0;
+  visualFX.nitroActive = false;
   
   // Reset player
   initPlayer();
@@ -449,6 +500,7 @@ function restartGame() {
   document.getElementById('pauseOverlay').classList.remove('active');
   document.getElementById('powerupIndicator').classList.remove('active');
   document.getElementById('comboDisplay').classList.remove('active');
+  document.getElementById('nitroBarContainer').classList.remove('active');
   
   updateUI();
   startGame();
@@ -555,10 +607,16 @@ function update() {
   if (!gameState.isPlaying || gameState.isPaused) return;
   
   const deltaSpeed = gameState.hasSlowMo ? 0.5 : 1;
+  const nitroMultiplier = gameState.hasNitro ? 1.8 : 1; // Nitro doubles effective speed
   
   // Update speed and difficulty
   gameState.currentSpeed += CONFIG.speedIncreaseRate;
-  gameState.distance += gameState.currentSpeed * deltaSpeed;
+  gameState.distance += gameState.currentSpeed * deltaSpeed * nitroMultiplier;
+  
+  // Nitro score bonus
+  if (gameState.hasNitro) {
+    gameState.score += Math.floor(10 * deltaSpeed); // Bonus points during nitro
+  }
   
   // Increase difficulty over time
   if (gameState.distance % CONFIG.difficultyIncreaseInterval < 10) {
@@ -572,7 +630,7 @@ function update() {
   player.lane = inputState.targetLane;
   
   // Update road markings
-  updateRoadMarkings(deltaSpeed);
+  updateRoadMarkings(deltaSpeed * nitroMultiplier);
   
   // Update stars
   updateStars();
@@ -728,6 +786,14 @@ function updatePowerUpTimers() {
   if (gameState.activePowerUp) {
     const remaining = Math.ceil((gameState.powerUpEndTime - Date.now()) / 1000);
     document.getElementById('powerupTimer').textContent = remaining + 's';
+    
+    // Update nitro bar if nitro is active
+    if (gameState.hasNitro) {
+      const totalDuration = CONFIG.nitroDuration;
+      const elapsed = Date.now() - (gameState.powerUpEndTime - totalDuration);
+      const progress = Math.max(0, 1 - (elapsed / totalDuration));
+      document.getElementById('nitroFill').style.width = (progress * 100) + '%';
+    }
   }
 }
 
@@ -820,6 +886,16 @@ function collectPowerUp(powerUp) {
       gameState.hasDoublePoints = true;
       gameState.powerUpEndTime = Date.now() + CONFIG.doublePointsDuration;
       break;
+    case 'NITRO':
+      gameState.hasNitro = true;
+      visualFX.nitroActive = true;
+      visualFX.nitroEndTime = Date.now() + CONFIG.nitroDuration;
+      gameState.powerUpEndTime = visualFX.nitroEndTime;
+      // Show nitro bar
+      document.getElementById('nitroBarContainer').classList.add('active');
+      // Trigger screen shake for impact
+      triggerScreenShake(5, 100);
+      break;
   }
   
   // Show power-up indicator
@@ -838,9 +914,12 @@ function deactivatePowerUp() {
   gameState.hasMagnet = false;
   gameState.hasSlowMo = false;
   gameState.hasDoublePoints = false;
+  gameState.hasNitro = false;
   gameState.activePowerUp = null;
+  visualFX.nitroActive = false;
   
   document.getElementById('powerupIndicator').classList.remove('active');
+  document.getElementById('nitroBarContainer').classList.remove('active');
 }
 
 function handleDodge() {
@@ -928,11 +1007,32 @@ function render() {
   // Clear canvas
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   
+  ctx.save();
+  
+  // Apply screen shake if active
+  if (visualFX.screenShake > 0) {
+    const shakeX = (Math.random() - 0.5) * visualFX.screenShakeIntensity * visualFX.screenShake;
+    const shakeY = (Math.random() - 0.5) * visualFX.screenShakeIntensity * visualFX.screenShake;
+    ctx.translate(shakeX, shakeY);
+  }
+  
   // Draw background gradient (road)
   drawRoad();
   
   // Draw stars (background)
   drawStars();
+  
+  // Draw speed lines (at high speeds)
+  if (gameState.isPlaying && gameState.currentSpeed > 1.5) {
+    visualFX.speedLines.forEach(line => {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${line.opacity})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(line.x, line.y);
+      ctx.lineTo(line.x, line.y + line.length);
+      ctx.stroke();
+    });
+  }
   
   // Draw road markings
   drawRoadMarkings();
@@ -955,10 +1055,18 @@ function render() {
     
     // Draw particles
     drawParticles();
+    
+    // Draw AAA visual effects
+    drawVisualFX();
   }
+  
+  // Update visual effects
+  updateVisualFX();
   
   // Update game logic
   update();
+  
+  ctx.restore();
   
   // Continue render loop
   requestAnimationFrame(render);
@@ -1131,60 +1239,175 @@ function drawCar(car, color) {
   
   ctx.save();
   
-  // Car shadow
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  // ========== AAA QUALITY CAR RENDERING ==========
+  
+  // Dynamic shadow based on speed
+  const shadowOffset = 3 + gameState.currentSpeed * 2;
+  const shadowBlur = 8 + gameState.currentSpeed * 3;
+  
+  // Car shadow (multi-layered for realism)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
   ctx.beginPath();
-  ctx.ellipse(x + w / 2 + 5, y + h - 5, w / 2 - 5, 10, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + w / 2 + shadowOffset, y + h - 3, w / 2 + 2, 12, 0, 0, Math.PI * 2);
   ctx.fill();
   
-  // Car body
-  const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
-  gradient.addColorStop(0, color);
-  gradient.addColorStop(0.5, shadeColor(color, -20));
-  gradient.addColorStop(1, shadeColor(color, -40));
-  ctx.fillStyle = gradient;
-  
-  // Main body
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
   ctx.beginPath();
-  ctx.roundRect(x + 5, y + 15, w - 10, h - 30, 8);
+  ctx.ellipse(x + w / 2 + shadowOffset * 1.5, y + h, w / 2 + 5, 15, 0, 0, Math.PI * 2);
   ctx.fill();
   
-  // Roof
-  ctx.fillStyle = shadeColor(color, 20);
+  // ========== CAR BODY ==========
+  
+  // Base metallic gradient
+  const bodyGradient = ctx.createLinearGradient(x, y, x + w, y + h);
+  bodyGradient.addColorStop(0, shadeColor(color, 40));
+  bodyGradient.addColorStop(0.2, color);
+  bodyGradient.addColorStop(0.5, shadeColor(color, -15));
+  bodyGradient.addColorStop(0.8, shadeColor(color, -30));
+  bodyGradient.addColorStop(1, shadeColor(color, -45));
+  
+  // Main body shape
+  ctx.fillStyle = bodyGradient;
   ctx.beginPath();
-  ctx.roundRect(x + 10, y + 25, w - 20, h / 2.5, 6);
+  ctx.moveTo(x + 8, y + h - 12);
+  ctx.lineTo(x + 8, y + 25);
+  ctx.quadraticCurveTo(x + 8, y + 15, x + 15, y + 12);
+  ctx.lineTo(x + w - 15, y + 12);
+  ctx.quadraticCurveTo(x + w - 8, y + 15, x + w - 8, y + 25);
+  ctx.lineTo(x + w - 8, y + h - 12);
+  ctx.quadraticCurveTo(x + w - 8, y + h - 5, x + w - 15, y + h - 5);
+  ctx.lineTo(x + 15, y + h - 5);
+  ctx.quadraticCurveTo(x + 8, y + h - 5, x + 8, y + h - 12);
+  ctx.closePath();
   ctx.fill();
   
-  // Windshield
-  ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
+  // Body highlight (chrome effect)
+  ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  
+  // ========== ROOF / CABIN ==========
+  
+  const roofGradient = ctx.createLinearGradient(x, y + 20, x + w, y + 45);
+  roofGradient.addColorStop(0, shadeColor(color, 30));
+  roofGradient.addColorStop(0.5, shadeColor(color, 10));
+  roofGradient.addColorStop(1, shadeColor(color, -20));
+  
+  ctx.fillStyle = roofGradient;
   ctx.beginPath();
-  ctx.roundRect(x + 12, y + 28, w - 24, h / 4, 4);
+  ctx.moveTo(x + 12, y + 45);
+  ctx.lineTo(x + 14, y + 25);
+  ctx.quadraticCurveTo(x + w / 2, y + 20, x + w - 14, y + 25);
+  ctx.lineTo(x + w - 12, y + 45);
+  ctx.closePath();
   ctx.fill();
+  
+  // ========== WINDOWS (Tinted glass effect) ==========
+  
+  // Windshield gradient (reflective glass)
+  const glassGradient = ctx.createLinearGradient(x + 12, y + 25, x + w - 12, y + 42);
+  glassGradient.addColorStop(0, 'rgba(150, 220, 255, 0.9)');
+  glassGradient.addColorStop(0.3, 'rgba(100, 180, 255, 0.7)');
+  glassGradient.addColorStop(0.7, 'rgba(60, 120, 180, 0.8)');
+  glassGradient.addColorStop(1, 'rgba(40, 80, 140, 0.9)');
   
   // Rear window
+  ctx.fillStyle = glassGradient;
   ctx.beginPath();
-  ctx.roundRect(x + 12, y + h / 2 - 5, w - 24, h / 5, 4);
+  ctx.moveTo(x + 14, y + 26);
+  ctx.quadraticCurveTo(x + w / 2, y + 22, x + w - 14, y + 26);
+  ctx.lineTo(x + w - 13, y + 38);
+  ctx.lineTo(x + 13, y + 38);
+  ctx.closePath();
   ctx.fill();
   
-  // Headlights
-  ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
+  // Glass reflection highlight
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.roundRect(x + 10, y + h - 18, 8, 6, 2);
+  ctx.moveTo(x + 16, y + 28);
+  ctx.lineTo(x + w / 2, y + 25);
+  ctx.stroke();
+  
+  // ========== TAILLIGHTS (Glowing) ==========
+  
+  // Taillight glow
+  ctx.shadowColor = 'rgba(255, 50, 50, 0.8)';
+  ctx.shadowBlur = 15;
+  
+  ctx.fillStyle = '#ff3333';
+  ctx.beginPath();
+  ctx.roundRect(x + 10, y + 14, 7, 5, 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.roundRect(x + w - 18, y + h - 18, 8, 6, 2);
+  ctx.roundRect(x + w - 17, y + 14, 7, 5, 2);
   ctx.fill();
   
-  // Taillights (for enemy cars)
-  ctx.fillStyle = 'rgba(255, 50, 50, 0.8)';
+  // Taillight inner glow
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255, 150, 150, 0.9)';
   ctx.beginPath();
-  ctx.roundRect(x + 10, y + 17, 8, 6, 2);
+  ctx.roundRect(x + 11, y + 15, 3, 2, 1);
   ctx.fill();
   ctx.beginPath();
-  ctx.roundRect(x + w - 18, y + 17, 8, 6, 2);
+  ctx.roundRect(x + w - 15, y + 15, 3, 2, 1);
   ctx.fill();
+  
+  // ========== HEADLIGHTS ==========
+  
+  ctx.fillStyle = 'rgba(200, 200, 180, 0.9)';
+  ctx.beginPath();
+  ctx.roundRect(x + 10, y + h - 16, 7, 5, 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(x + w - 17, y + h - 16, 7, 5, 2);
+  ctx.fill();
+  
+  // ========== SIDE DETAILS ==========
+  
+  // Door line
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2, y + 25);
+  ctx.lineTo(x + w / 2, y + h - 15);
+  ctx.stroke();
+  
+  // Side mirror hints
+  ctx.fillStyle = shadeColor(color, -20);
+  ctx.fillRect(x + 5, y + 32, 4, 6);
+  ctx.fillRect(x + w - 9, y + 32, 4, 6);
+  
+  // ========== WHEELS (Visible from top-down angle) ==========
+  
+  // Wheel shadows
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+  ctx.fillRect(x + 4, y + 18, 6, 14);
+  ctx.fillRect(x + w - 10, y + 18, 6, 14);
+  ctx.fillRect(x + 4, y + h - 28, 6, 14);
+  ctx.fillRect(x + w - 10, y + h - 28, 6, 14);
+  
+  // Wheel rims
+  ctx.fillStyle = '#333';
+  ctx.fillRect(x + 5, y + 19, 4, 12);
+  ctx.fillRect(x + w - 9, y + 19, 4, 12);
+  ctx.fillRect(x + 5, y + h - 27, 4, 12);
+  ctx.fillRect(x + w - 9, y + h - 27, 4, 12);
+  
+  // Rim shine
+  ctx.fillStyle = 'rgba(200, 200, 200, 0.4)';
+  ctx.fillRect(x + 5, y + 19, 2, 4);
+  ctx.fillRect(x + w - 9, y + 19, 2, 4);
+  ctx.fillRect(x + 5, y + h - 27, 2, 4);
+  ctx.fillRect(x + w - 9, y + h - 27, 2, 4);
   
   ctx.restore();
+  
+  // ========== EXHAUST PARTICLES ==========
+  if (CONFIG.enableParticles && gameState.isPlaying) {
+    spawnExhaustParticle(x + w / 2 - 5, y + h + 2);
+    spawnExhaustParticle(x + w / 2 + 5, y + h + 2);
+  }
 }
 
 function drawPlayer() {
@@ -1196,92 +1419,328 @@ function drawPlayer() {
   
   ctx.save();
   
-  // Shield effect
-  if (gameState.hasShield) {
+  // ========== NITRO BOOST EFFECT ==========
+  if (visualFX.nitroActive || gameState.hasNitro) {
+    // Nitro flames from exhaust
+    const flameHeight = 30 + Math.random() * 20;
+    const flameGradient = ctx.createLinearGradient(x + w/2, y + h, x + w/2, y + h + flameHeight);
+    flameGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+    flameGradient.addColorStop(0.2, 'rgba(100, 200, 255, 0.8)');
+    flameGradient.addColorStop(0.5, 'rgba(50, 100, 255, 0.6)');
+    flameGradient.addColorStop(1, 'rgba(100, 50, 255, 0)');
+    
+    ctx.fillStyle = flameGradient;
     ctx.beginPath();
-    ctx.arc(x + w / 2, y + h / 2, w * 0.8, 0, Math.PI * 2);
-    const shieldGradient = ctx.createRadialGradient(
-      x + w / 2, y + h / 2, 0,
-      x + w / 2, y + h / 2, w * 0.8
-    );
-    shieldGradient.addColorStop(0, 'rgba(100, 255, 200, 0.1)');
-    shieldGradient.addColorStop(0.7, 'rgba(100, 255, 200, 0.2)');
-    shieldGradient.addColorStop(1, 'rgba(100, 255, 200, 0.4)');
-    ctx.fillStyle = shieldGradient;
+    ctx.moveTo(x + w/2 - 8, y + h);
+    ctx.quadraticCurveTo(x + w/2 - 12, y + h + flameHeight/2, x + w/2, y + h + flameHeight);
+    ctx.quadraticCurveTo(x + w/2 + 12, y + h + flameHeight/2, x + w/2 + 8, y + h);
     ctx.fill();
     
-    ctx.strokeStyle = 'rgba(100, 255, 200, 0.6)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // Nitro glow around car
+    ctx.shadowColor = 'rgba(100, 150, 255, 0.8)';
+    ctx.shadowBlur = 30;
   }
   
-  // Car shadow
+  // ========== SHIELD EFFECT (Enhanced) ==========
+  if (gameState.hasShield) {
+    // Hexagonal shield pattern
+    const shieldRadius = w * 1.0;
+    const time = Date.now() * 0.003;
+    
+    // Outer glow
+    ctx.shadowColor = 'rgba(0, 255, 200, 0.8)';
+    ctx.shadowBlur = 25;
+    
+    // Shield dome
+    const shieldGradient = ctx.createRadialGradient(
+      x + w/2, y + h/2, 0,
+      x + w/2, y + h/2, shieldRadius
+    );
+    shieldGradient.addColorStop(0, 'rgba(0, 255, 200, 0.05)');
+    shieldGradient.addColorStop(0.5, 'rgba(0, 255, 200, 0.1)');
+    shieldGradient.addColorStop(0.8, 'rgba(0, 255, 200, 0.2)');
+    shieldGradient.addColorStop(1, 'rgba(0, 255, 200, 0.4)');
+    
+    ctx.fillStyle = shieldGradient;
+    ctx.beginPath();
+    ctx.arc(x + w/2, y + h/2, shieldRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Rotating shield ring
+    ctx.strokeStyle = `rgba(0, 255, 200, ${0.5 + Math.sin(time) * 0.3})`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10, 5]);
+    ctx.beginPath();
+    ctx.arc(x + w/2, y + h/2, shieldRadius - 5, time, time + Math.PI * 1.5);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Hexagon pattern
+    ctx.strokeStyle = 'rgba(0, 255, 200, 0.3)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI / 3) * i + time * 0.5;
+      const hx = x + w/2 + Math.cos(angle) * shieldRadius * 0.7;
+      const hy = y + h/2 + Math.sin(angle) * shieldRadius * 0.7;
+      ctx.beginPath();
+      ctx.arc(hx, hy, 8, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    
+    ctx.shadowBlur = 0;
+  }
+  
+  // ========== PREMIUM PLAYER CAR ==========
+  
+  // Multi-layer shadow for depth
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.beginPath();
+  ctx.ellipse(x + w/2 + 4, y + h - 2, w/2 + 3, 14, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+  ctx.beginPath();
+  ctx.ellipse(x + w/2 + 6, y + h + 2, w/2 + 8, 18, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // ========== SPORTS CAR BODY ==========
+  
+  // Metallic paint with clear coat effect
+  const bodyGradient = ctx.createLinearGradient(x, y, x + w, y + h);
+  bodyGradient.addColorStop(0, shadeColor(color, 50));
+  bodyGradient.addColorStop(0.15, shadeColor(color, 30));
+  bodyGradient.addColorStop(0.3, color);
+  bodyGradient.addColorStop(0.5, shadeColor(color, -10));
+  bodyGradient.addColorStop(0.7, shadeColor(color, -25));
+  bodyGradient.addColorStop(1, shadeColor(color, -40));
+  
+  // Sleek sports car shape
+  ctx.fillStyle = bodyGradient;
+  ctx.beginPath();
+  ctx.moveTo(x + 10, y + h - 10);
+  ctx.lineTo(x + 6, y + h - 25);
+  ctx.lineTo(x + 6, y + 30);
+  ctx.quadraticCurveTo(x + 6, y + 12, x + 18, y + 8);
+  ctx.lineTo(x + w - 18, y + 8);
+  ctx.quadraticCurveTo(x + w - 6, y + 12, x + w - 6, y + 30);
+  ctx.lineTo(x + w - 6, y + h - 25);
+  ctx.lineTo(x + w - 10, y + h - 10);
+  ctx.quadraticCurveTo(x + w - 10, y + h - 4, x + w - 18, y + h - 4);
+  ctx.lineTo(x + 18, y + h - 4);
+  ctx.quadraticCurveTo(x + 10, y + h - 4, x + 10, y + h - 10);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Chrome outline
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  
+  // ========== HOOD DETAILS ==========
+  
+  // Hood scoop
   ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
   ctx.beginPath();
-  ctx.ellipse(x + w / 2 + 5, y + h - 5, w / 2 - 5, 10, 0, 0, Math.PI * 2);
+  ctx.roundRect(x + w/2 - 8, y + h - 35, 16, 12, 3);
   ctx.fill();
   
-  // Car body gradient
-  const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
-  gradient.addColorStop(0, color);
-  gradient.addColorStop(0.5, shadeColor(color, -20));
-  gradient.addColorStop(1, shadeColor(color, -40));
-  ctx.fillStyle = gradient;
+  // Hood lines
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x + 12, y + h - 45);
+  ctx.lineTo(x + 12, y + h - 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + w - 12, y + h - 45);
+  ctx.lineTo(x + w - 12, y + h - 10);
+  ctx.stroke();
   
-  // Main body
-  ctx.beginPath();
-  ctx.roundRect(x + 5, y + 15, w - 10, h - 30, 8);
-  ctx.fill();
+  // ========== CABIN / ROOF ==========
   
-  // Roof
-  ctx.fillStyle = shadeColor(color, 20);
-  ctx.beginPath();
-  ctx.roundRect(x + 10, y + 25, w - 20, h / 2.5, 6);
-  ctx.fill();
+  const roofGradient = ctx.createLinearGradient(x + 10, y + 15, x + w - 10, y + 50);
+  roofGradient.addColorStop(0, shadeColor(color, 35));
+  roofGradient.addColorStop(0.3, shadeColor(color, 15));
+  roofGradient.addColorStop(0.7, shadeColor(color, -5));
+  roofGradient.addColorStop(1, shadeColor(color, -20));
   
-  // Windshield
-  ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
+  ctx.fillStyle = roofGradient;
   ctx.beginPath();
-  ctx.roundRect(x + 12, y + h / 2 - 5, w - 24, h / 5, 4);
-  ctx.fill();
-  
-  // Front window
-  ctx.beginPath();
-  ctx.roundRect(x + 12, y + 28, w - 24, h / 4, 4);
-  ctx.fill();
-  
-  // Headlights (bright for player - facing forward)
-  ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
-  ctx.beginPath();
-  ctx.roundRect(x + 10, y + 17, 8, 6, 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.roundRect(x + w - 18, y + 17, 8, 6, 2);
+  ctx.moveTo(x + 12, y + 48);
+  ctx.lineTo(x + 16, y + 22);
+  ctx.quadraticCurveTo(x + w/2, y + 16, x + w - 16, y + 22);
+  ctx.lineTo(x + w - 12, y + 48);
+  ctx.closePath();
   ctx.fill();
   
-  // Headlight glow
-  ctx.fillStyle = 'rgba(255, 255, 200, 0.2)';
+  // ========== WINDSHIELD (Front - facing up in game) ==========
+  
+  const windshieldGradient = ctx.createLinearGradient(x + 14, y + 22, x + w - 14, y + 45);
+  windshieldGradient.addColorStop(0, 'rgba(180, 230, 255, 0.95)');
+  windshieldGradient.addColorStop(0.3, 'rgba(120, 200, 255, 0.85)');
+  windshieldGradient.addColorStop(0.6, 'rgba(80, 150, 220, 0.8)');
+  windshieldGradient.addColorStop(1, 'rgba(50, 100, 180, 0.9)');
+  
+  ctx.fillStyle = windshieldGradient;
   ctx.beginPath();
-  ctx.ellipse(x + 14, y + 10, 10, 15, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(x + w - 14, y + 10, 10, 15, 0, 0, Math.PI * 2);
+  ctx.moveTo(x + 17, y + 23);
+  ctx.quadraticCurveTo(x + w/2, y + 18, x + w - 17, y + 23);
+  ctx.lineTo(x + w - 14, y + 42);
+  ctx.lineTo(x + 14, y + 42);
+  ctx.closePath();
   ctx.fill();
   
-  // Taillights (red)
-  ctx.fillStyle = 'rgba(255, 50, 50, 0.8)';
+  // Windshield reflection streak
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.roundRect(x + 10, y + h - 18, 8, 6, 2);
+  ctx.moveTo(x + 20, y + 26);
+  ctx.quadraticCurveTo(x + w/2 - 5, y + 22, x + w/2 + 5, y + 24);
+  ctx.stroke();
+  
+  // ========== HEADLIGHTS (Bright LED style) ==========
+  
+  // Headlight housings
+  ctx.fillStyle = 'rgba(30, 30, 30, 0.9)';
+  ctx.beginPath();
+  ctx.roundRect(x + 8, y + 10, 10, 8, 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.roundRect(x + w - 18, y + h - 18, 8, 6, 2);
+  ctx.roundRect(x + w - 18, y + 10, 10, 8, 2);
   ctx.fill();
   
-  // Racing stripe
+  // LED headlights with glow
+  ctx.shadowColor = 'rgba(255, 255, 220, 0.9)';
+  ctx.shadowBlur = 20;
+  
+  ctx.fillStyle = '#ffffee';
+  ctx.beginPath();
+  ctx.roundRect(x + 9, y + 11, 8, 6, 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(x + w - 17, y + 11, 8, 6, 2);
+  ctx.fill();
+  
+  // Headlight beam effect
+  ctx.shadowBlur = 0;
+  const beamGradient = ctx.createLinearGradient(x + w/2, y + 10, x + w/2, y - 40);
+  beamGradient.addColorStop(0, 'rgba(255, 255, 220, 0.3)');
+  beamGradient.addColorStop(1, 'rgba(255, 255, 220, 0)');
+  
+  ctx.fillStyle = beamGradient;
+  ctx.beginPath();
+  ctx.moveTo(x + 8, y + 12);
+  ctx.lineTo(x - 10, y - 30);
+  ctx.lineTo(x + 25, y - 30);
+  ctx.lineTo(x + 18, y + 12);
+  ctx.fill();
+  
+  ctx.beginPath();
+  ctx.moveTo(x + w - 8, y + 12);
+  ctx.lineTo(x + w + 10, y - 30);
+  ctx.lineTo(x + w - 25, y - 30);
+  ctx.lineTo(x + w - 18, y + 12);
+  ctx.fill();
+  
+  // ========== TAILLIGHTS (Red LED) ==========
+  
+  ctx.shadowColor = 'rgba(255, 50, 50, 0.8)';
+  ctx.shadowBlur = 15;
+  
+  ctx.fillStyle = '#ff2222';
+  ctx.beginPath();
+  ctx.roundRect(x + 8, y + h - 14, 10, 5, 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(x + w - 18, y + h - 14, 10, 5, 2);
+  ctx.fill();
+  
+  ctx.shadowBlur = 0;
+  
+  // Taillight inner LED dots
+  ctx.fillStyle = 'rgba(255, 150, 150, 0.9)';
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.arc(x + 11 + i * 3, y + h - 11.5, 1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + w - 15 + i * 3, y + h - 11.5, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // ========== RACING STRIPES ==========
+  
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.fillRect(x + w/2 - 5, y + 10, 3, h - 20);
+  ctx.fillRect(x + w/2 + 2, y + 10, 3, h - 20);
+  
+  // ========== SPOILER ==========
+  
+  ctx.fillStyle = shadeColor(color, -30);
+  ctx.beginPath();
+  ctx.roundRect(x + 6, y + h - 8, w - 12, 4, 1);
+  ctx.fill();
+  
+  // Spoiler supports
+  ctx.fillStyle = 'rgba(50, 50, 50, 0.8)';
+  ctx.fillRect(x + 10, y + h - 10, 3, 6);
+  ctx.fillRect(x + w - 13, y + h - 10, 3, 6);
+  
+  // ========== WHEELS ==========
+  
+  // Wheel wells
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(x + 2, y + 15, 8, 16);
+  ctx.fillRect(x + w - 10, y + 15, 8, 16);
+  ctx.fillRect(x + 2, y + h - 28, 8, 16);
+  ctx.fillRect(x + w - 10, y + h - 28, 8, 16);
+  
+  // Alloy wheels
+  const wheelGradient = ctx.createLinearGradient(0, 0, 6, 0);
+  wheelGradient.addColorStop(0, '#666');
+  wheelGradient.addColorStop(0.5, '#999');
+  wheelGradient.addColorStop(1, '#555');
+  
+  ctx.fillStyle = wheelGradient;
+  ctx.fillRect(x + 3, y + 16, 6, 14);
+  ctx.fillRect(x + w - 9, y + 16, 6, 14);
+  ctx.fillRect(x + 3, y + h - 27, 6, 14);
+  ctx.fillRect(x + w - 9, y + h - 27, 6, 14);
+  
+  // Wheel shine
   ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-  ctx.fillRect(x + w / 2 - 3, y + 15, 6, h - 30);
+  ctx.fillRect(x + 3, y + 16, 2, 5);
+  ctx.fillRect(x + w - 9, y + 16, 2, 5);
+  ctx.fillRect(x + 3, y + h - 27, 2, 5);
+  ctx.fillRect(x + w - 9, y + h - 27, 2, 5);
+  
+  // ========== SIDE MIRRORS ==========
+  
+  ctx.fillStyle = shadeColor(color, -15);
+  ctx.beginPath();
+  ctx.ellipse(x + 3, y + 35, 4, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x + w - 3, y + 35, 4, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
   
   ctx.restore();
+  
+  // ========== EXHAUST PARTICLES ==========
+  if (CONFIG.enableParticles && gameState.isPlaying) {
+    // Normal exhaust
+    if (Math.random() > 0.7) {
+      spawnExhaustParticle(x + w/2 - 6, y + h + 3);
+      spawnExhaustParticle(x + w/2 + 6, y + h + 3);
+    }
+    
+    // Nitro boost particles
+    if (visualFX.nitroActive || gameState.hasNitro) {
+      for (let i = 0; i < 3; i++) {
+        spawnNitroParticle(x + w/2, y + h + 5);
+      }
+    }
+  }
 }
 
 function drawCoin(coin) {
@@ -1506,6 +1965,314 @@ function playSound(type) {
       oscillator.stop(ctx.currentTime + 0.3);
       break;
   }
+}
+
+// ============================================
+// AAA PARTICLE EFFECTS SYSTEM
+// ============================================
+
+function spawnExhaustParticle(x, y) {
+  if (Math.random() > 0.3) return; // Throttle spawn rate
+  
+  visualFX.exhaustParticles.push({
+    x: x + (Math.random() - 0.5) * 4,
+    y: y,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: 2 + Math.random() * 2,
+    size: 2 + Math.random() * 3,
+    life: 1,
+    decay: 0.03 + Math.random() * 0.02,
+    color: `rgba(${100 + Math.random() * 50}, ${100 + Math.random() * 50}, ${100 + Math.random() * 50}, `,
+  });
+}
+
+function spawnNitroParticle(x, y) {
+  visualFX.exhaustParticles.push({
+    x: x + (Math.random() - 0.5) * 10,
+    y: y,
+    vx: (Math.random() - 0.5) * 2,
+    vy: 5 + Math.random() * 5,
+    size: 4 + Math.random() * 6,
+    life: 1,
+    decay: 0.05 + Math.random() * 0.03,
+    isNitro: true,
+  });
+}
+
+function spawnSparkParticle(x, y) {
+  for (let i = 0; i < 5; i++) {
+    visualFX.sparkParticles.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8 - 2,
+      size: 1 + Math.random() * 2,
+      life: 1,
+      decay: 0.08 + Math.random() * 0.05,
+    });
+  }
+}
+
+function spawnDustParticle(x, y, direction) {
+  visualFX.dustParticles.push({
+    x: x,
+    y: y,
+    vx: direction * (2 + Math.random() * 3),
+    vy: -1 + Math.random() * 2,
+    size: 8 + Math.random() * 12,
+    life: 0.6,
+    decay: 0.015,
+  });
+}
+
+function updateVisualFX() {
+  // Update time
+  visualFX.time += 0.016;
+  
+  // Update exhaust particles
+  for (let i = visualFX.exhaustParticles.length - 1; i >= 0; i--) {
+    const p = visualFX.exhaustParticles[i];
+    p.x += p.vx;
+    p.y += p.vy * gameState.currentSpeed;
+    p.life -= p.decay;
+    p.size *= 1.02;
+    
+    if (p.life <= 0 || p.y > canvasHeight) {
+      visualFX.exhaustParticles.splice(i, 1);
+    }
+  }
+  
+  // Update spark particles
+  for (let i = visualFX.sparkParticles.length - 1; i >= 0; i--) {
+    const p = visualFX.sparkParticles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.3; // Gravity
+    p.life -= p.decay;
+    
+    if (p.life <= 0) {
+      visualFX.sparkParticles.splice(i, 1);
+    }
+  }
+  
+  // Update dust particles
+  for (let i = visualFX.dustParticles.length - 1; i >= 0; i--) {
+    const p = visualFX.dustParticles[i];
+    p.x += p.vx;
+    p.y += p.vy + gameState.currentSpeed * 2;
+    p.vx *= 0.98;
+    p.life -= p.decay;
+    p.size *= 1.03;
+    
+    if (p.life <= 0 || p.y > canvasHeight) {
+      visualFX.dustParticles.splice(i, 1);
+    }
+  }
+  
+  // Update speed lines
+  updateSpeedLines();
+  
+  // Update screen shake
+  if (visualFX.screenShake > 0) {
+    visualFX.screenShake -= 0.1;
+  }
+  
+  // Update nitro state
+  if (visualFX.nitroActive && Date.now() > visualFX.nitroEndTime) {
+    visualFX.nitroActive = false;
+  }
+}
+
+function updateSpeedLines() {
+  // Spawn new speed lines at high speeds
+  if (gameState.currentSpeed > 1.5 && gameState.isPlaying && Math.random() > 0.7) {
+    visualFX.speedLines.push({
+      x: Math.random() > 0.5 ? Math.random() * 50 : canvasWidth - Math.random() * 50,
+      y: -20,
+      length: 30 + Math.random() * 50,
+      speed: 15 + gameState.currentSpeed * 5,
+      opacity: 0.3 + Math.random() * 0.3,
+    });
+  }
+  
+  // Update existing speed lines
+  for (let i = visualFX.speedLines.length - 1; i >= 0; i--) {
+    const line = visualFX.speedLines[i];
+    line.y += line.speed;
+    line.opacity -= 0.01;
+    
+    if (line.y > canvasHeight || line.opacity <= 0) {
+      visualFX.speedLines.splice(i, 1);
+    }
+  }
+}
+
+function drawVisualFX() {
+  // Apply screen shake
+  if (visualFX.screenShake > 0) {
+    const shakeX = (Math.random() - 0.5) * visualFX.screenShakeIntensity * visualFX.screenShake;
+    const shakeY = (Math.random() - 0.5) * visualFX.screenShakeIntensity * visualFX.screenShake;
+    ctx.translate(shakeX, shakeY);
+  }
+  
+  // Draw speed lines
+  visualFX.speedLines.forEach(line => {
+    ctx.strokeStyle = `rgba(255, 255, 255, ${line.opacity})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(line.x, line.y);
+    ctx.lineTo(line.x, line.y + line.length);
+    ctx.stroke();
+  });
+  
+  // Draw exhaust particles
+  visualFX.exhaustParticles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life * 0.6;
+    
+    if (p.isNitro) {
+      // Nitro flame colors
+      const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      gradient.addColorStop(0.3, 'rgba(100, 200, 255, 0.7)');
+      gradient.addColorStop(0.6, 'rgba(50, 100, 255, 0.5)');
+      gradient.addColorStop(1, 'rgba(100, 50, 200, 0)');
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = p.color + p.life * 0.5 + ')';
+    }
+    
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Draw spark particles
+  visualFX.sparkParticles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    
+    // Bright yellow-orange sparks
+    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+    gradient.addColorStop(0, 'rgba(255, 255, 200, 1)');
+    gradient.addColorStop(0.5, 'rgba(255, 200, 50, 0.8)');
+    gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  });
+  
+  // Draw dust particles
+  visualFX.dustParticles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life * 0.4;
+    ctx.fillStyle = 'rgba(150, 140, 120, 1)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Draw motion blur effect at high speeds
+  if (gameState.currentSpeed > 2 && CONFIG.enableMotionBlur) {
+    drawMotionBlur();
+  }
+  
+  // Draw vignette effect
+  drawVignette();
+  
+  // Draw lens flare if enabled
+  if (CONFIG.enableLensFlare && gameState.isPlaying) {
+    drawLensFlare();
+  }
+}
+
+function drawMotionBlur() {
+  const blurIntensity = Math.min((gameState.currentSpeed - 2) * 0.1, 0.3);
+  
+  // Edge blur gradient on sides
+  const leftBlur = ctx.createLinearGradient(0, 0, 60, 0);
+  leftBlur.addColorStop(0, `rgba(0, 0, 0, ${blurIntensity})`);
+  leftBlur.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  
+  ctx.fillStyle = leftBlur;
+  ctx.fillRect(0, 0, 60, canvasHeight);
+  
+  const rightBlur = ctx.createLinearGradient(canvasWidth, 0, canvasWidth - 60, 0);
+  rightBlur.addColorStop(0, `rgba(0, 0, 0, ${blurIntensity})`);
+  rightBlur.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  
+  ctx.fillStyle = rightBlur;
+  ctx.fillRect(canvasWidth - 60, 0, 60, canvasHeight);
+}
+
+function drawVignette() {
+  const gradient = ctx.createRadialGradient(
+    canvasWidth / 2, canvasHeight / 2, canvasHeight * 0.3,
+    canvasWidth / 2, canvasHeight / 2, canvasHeight * 0.8
+  );
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+}
+
+function drawLensFlare() {
+  // Sun/light position at top
+  const sunX = canvasWidth * 0.7;
+  const sunY = 30;
+  const time = Date.now() * 0.001;
+  
+  // Main flare
+  ctx.save();
+  ctx.globalAlpha = 0.15 + Math.sin(time * 2) * 0.05;
+  
+  const flareGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 80);
+  flareGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+  flareGradient.addColorStop(0.3, 'rgba(255, 220, 150, 0.4)');
+  flareGradient.addColorStop(1, 'rgba(255, 200, 100, 0)');
+  
+  ctx.fillStyle = flareGradient;
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, 80, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Secondary flares along the line
+  const flarePositions = [0.3, 0.5, 0.7, 0.85];
+  const flareSizes = [15, 25, 10, 20];
+  const flareColors = [
+    'rgba(255, 100, 50, 0.3)',
+    'rgba(100, 200, 255, 0.2)',
+    'rgba(255, 255, 100, 0.25)',
+    'rgba(200, 100, 255, 0.15)',
+  ];
+  
+  const endX = canvasWidth * 0.3;
+  const endY = canvasHeight * 0.8;
+  
+  flarePositions.forEach((pos, i) => {
+    const fx = sunX + (endX - sunX) * pos;
+    const fy = sunY + (endY - sunY) * pos;
+    
+    ctx.globalAlpha = 0.1 + Math.sin(time * 3 + i) * 0.05;
+    ctx.fillStyle = flareColors[i];
+    ctx.beginPath();
+    ctx.arc(fx, fy, flareSizes[i], 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  ctx.restore();
+}
+
+function triggerScreenShake(intensity = 10) {
+  visualFX.screenShake = 1;
+  visualFX.screenShakeIntensity = intensity;
 }
 
 // ============================================
