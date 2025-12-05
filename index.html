@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hydra Car Racing</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -14,56 +15,227 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #2c3e50, #4ca1af);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       color: white;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      
       overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Floating orbs for depth */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.2);
+      top: -100px;
+      left: -100px;
+      animation: float1 8s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 200px;
+      height: 200px;
+      background: rgba(120, 200, 255, 0.3);
+      bottom: 10%;
+      right: -50px;
+      animation: float2 10s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 150, 200, 0.25);
+      top: 50%;
+      left: 10%;
+      animation: float3 12s ease-in-out infinite;
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, 30px) scale(1.1); }
+    }
+
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-20px, -40px) scale(0.9); }
+    }
+
+    @keyframes float3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, -20px) scale(1.05); }
+    }
+
+    h1 {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 20px rgba(255,255,255,0.3);
+      z-index: 10;
+      position: relative;
     }
 
     .game-container {
       position: relative;
-      width: 100%;
+      width: 95%;
       max-width: 500px;
-      height: 80vh;
+      height: 70vh;
       overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-radius: 30px;
+      z-index: 10;
+      
+      /* Liquid Glass Effect */
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      
+      /* Glass border */
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 20px 60px -10px rgba(0, 0, 0, 0.3),
+        0 0 100px rgba(255, 255, 255, 0.1);
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        transparent 100%
+      );
+      border-radius: 30px 30px 0 0;
+      pointer-events: none;
+      z-index: 5;
     }
 
     #gameCanvas {
-      background-color: #1a1a2e;
+      background: transparent;
       display: block;
       width: 100%;
       height: 100%;
+      border-radius: 30px;
+    }
+
+    /* Glass UI Elements */
+    .glass-panel {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(15px) saturate(150%);
+      -webkit-backdrop-filter: blur(15px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
     }
 
     .score-container {
       position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 8px 15px;
-      border-radius: 20px;
+      top: 15px;
+      left: 15px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 18px;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .score-container::before {
+      content: '🏎️';
+      font-size: 1.1rem;
     }
 
     .top-score {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 8px 15px;
-      border-radius: 20px;
+      top: 15px;
+      right: 15px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 18px;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-score::before {
+      content: '👑';
+      font-size: 1.1rem;
+    }
+
+    /* Speed indicator */
+    .speed-indicator {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 8px 15px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .speed-indicator::before {
+      content: '⚡';
     }
 
     .controls {
@@ -74,28 +246,107 @@
       margin-top: 20px;
       padding: 0 20px;
       align-items: center;
+      z-index: 10;
+      position: relative;
     }
 
     .control-btn {
-      width: 80px;
-      height: 80px;
-      background-color: rgba(255, 255, 255, 0.2);
+      width: 75px;
+      height: 75px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: white;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      transition: 0.2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      
+      /* Liquid Glass Button */
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(15px) saturate(150%);
+      -webkit-backdrop-filter: blur(15px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 -2px 10px rgba(255, 255, 255, 0.1) inset;
+      
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .control-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        transparent 100%
+      );
+      border-radius: 50% 50% 0 0;
+      pointer-events: none;
+    }
+
+    .control-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
     }
 
     .control-btn:active {
-      background-color: rgba(255, 255, 255, 0.4);
-      transform: scale(0.95);
+      transform: scale(0.92);
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    }
+
+    .control-btn:active::after {
+      width: 100%;
+      height: 100%;
+    }
+
+    .control-btn i {
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    #playPauseBtn {
+      width: 85px;
+      height: 85px;
+      font-size: 2rem;
+      background: linear-gradient(
+        135deg,
+        rgba(100, 200, 255, 0.4) 0%,
+        rgba(150, 100, 255, 0.3) 50%,
+        rgba(255, 100, 200, 0.2) 100%
+      );
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 8px 32px rgba(100, 200, 255, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset; }
+      50% { box-shadow: 0 8px 40px rgba(150, 100, 255, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; }
     }
 
     .game-over {
@@ -104,103 +355,219 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 100;
+      border-radius: 30px;
+      
+      /* Frosted glass overlay */
+      background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.6) 0%,
+        rgba(50, 50, 80, 0.7) 100%
+      );
+      backdrop-filter: blur(30px) saturate(150%);
+      -webkit-backdrop-filter: blur(30px) saturate(150%);
+    }
+
+    .game-over-content {
+      text-align: center;
+      padding: 40px;
+      border-radius: 30px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .game-over h2 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: #e74c3c;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b6b, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .game-over p {
-      font-size: 1.5rem;
-      margin-bottom: 30px;
+      font-size: 1.3rem;
+      margin-bottom: 25px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    .game-over-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .restart-btn, .reset-btn {
+      border: none;
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
     }
 
     .restart-btn {
-      background-color: #3498db;
+      background: linear-gradient(
+        135deg,
+        rgba(100, 200, 255, 0.6) 0%,
+        rgba(100, 150, 255, 0.5) 100%
+      );
       color: white;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(100, 150, 255, 0.3);
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(100, 150, 255, 0.4);
     }
 
     .reset-btn {
-      background-color: #e74c3c;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 100, 100, 0.5) 0%,
+        rgba(255, 80, 80, 0.4) 100%
+      );
       color: white;
-      border: none;
-      padding: 10px 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 20px rgba(255, 100, 100, 0.2);
+      font-size: 0.95rem;
+      padding: 12px 28px;
+    }
+
+    .reset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 100, 100, 0.3);
+    }
+
+    .new-record {
+      display: none;
       font-size: 1rem;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      color: #ffd700;
+      margin-bottom: 15px;
+      animation: bounce 0.6s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
 
     @media (max-width: 500px) {
+      h1 {
+        font-size: 1.6rem;
+        margin: 10px 0;
+      }
       .controls {
-        margin-top: 10px;
+        margin-top: 15px;
       }
       .control-btn {
-        width: 70px;
-        height: 70px;
+        width: 65px;
+        height: 65px;
+        font-size: 1.5rem;
+      }
+      #playPauseBtn {
+        width: 75px;
+        height: 75px;
       }
       .game-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      height: 65%;
-      overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        height: 62vh;
+        border-radius: 25px;
+      }
+      .game-over-content {
+        padding: 30px;
+        margin: 0 20px;
+      }
+      .game-over h2 {
+        font-size: 1.8rem;
+      }
     }
-    }
+
     .footer {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 5px;
-  max-width: 500px;
-  padding: 0 20px;
-  font-size: 1rem;
-  color: #000000;
-}
-h1{
-  text-align: center;
-  margin-bottom: 5px;
-}
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      max-width: 500px;
+      padding: 0 20px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      z-index: 10;
+      position: relative;
+    }
+
+    .footer a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Hydra Car Racing</h1>
+  <!-- Floating orbs for depth -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <h1>🏁 Hydra Racing</h1>
 
   <div class="game-container">
-    <div class="score-container">Score: <span id="score">0</span></div>
-    <div class="top-score">Top: <span id="topScore">0</span></div>
+    <div class="score-container glass-panel">Score: <span id="score">0</span></div>
+    <div class="top-score glass-panel">Best: <span id="topScore">0</span></div>
+    <div class="speed-indicator glass-panel">Speed: <span id="speedDisplay">1x</span></div>
     <canvas id="gameCanvas"></canvas>
 
     <div class="game-over" id="gameOverScreen">
-      <h2>Game Over!</h2>
-      <p>Your Score: <span id="finalScore">0</span></p>
-      <button class="restart-btn" id="restartBtn">Play Again</button>
-      <button class="reset-btn" id="resetTopScoreBtn">Reset Top Score</button>
+      <div class="game-over-content">
+        <h2>💥 Game Over!</h2>
+        <p class="new-record" id="newRecord">🎉 New Record!</p>
+        <p>Your Score: <span id="finalScore">0</span></p>
+        <div class="game-over-buttons">
+          <button class="restart-btn" id="restartBtn">
+            <i class="fa-solid fa-rotate-right"></i> Play Again
+          </button>
+          <button class="reset-btn" id="resetTopScoreBtn">
+            <i class="fa-solid fa-trash"></i> Reset Best Score
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="controls">
-    <div class="control-btn" id="leftBtn"><i class="fa-solid fa-arrow-left"></i></div>
+    <div class="control-btn" id="leftBtn"><i class="fa-solid fa-chevron-left"></i></div>
     <div class="control-btn" id="playPauseBtn"><i class="fa-solid fa-play"></i></div>
-    <div class="control-btn" id="rightBtn"><i class="fa-solid fa-arrow-right"></i></div>
+    <div class="control-btn" id="rightBtn"><i class="fa-solid fa-chevron-right"></i></div>
   </div>
-<p class="footer">&copy; 2025 Zayan.<br> All Rights Reserved</p>
+
+  <p class="footer">&copy; 2025 Zayan. All Rights Reserved</p>
 
   <script>
     const canvas = document.getElementById('gameCanvas');
@@ -208,7 +575,9 @@ h1{
     const scoreElement = document.getElementById('score');
     const topScoreElement = document.getElementById('topScore');
     const finalScoreElement = document.getElementById('finalScore');
+    const speedDisplay = document.getElementById('speedDisplay');
     const gameOverScreen = document.getElementById('gameOverScreen');
+    const newRecordElement = document.getElementById('newRecord');
     const restartBtn = document.getElementById('restartBtn');
     const resetTopScoreBtn = document.getElementById('resetTopScoreBtn');
     const leftBtn = document.getElementById('leftBtn');
@@ -230,99 +599,369 @@ h1{
       running: false,
       score: 0,
       speed: 3,
-      roadWidth: canvas.width * 0.6,
-      roadX: (canvas.width - canvas.width * 0.6) / 2,
+      roadWidth: canvas.width * 0.7,
+      roadX: (canvas.width - canvas.width * 0.7) / 2,
       laneCount: 4,
       currentLane: 1,
-      carWidth: canvas.width * 0.1,
-      carHeight: canvas.width * 0.15,
+      carWidth: canvas.width * 0.12,
+      carHeight: canvas.width * 0.18,
       carX: 0,
       carY: 0,
       obstacles: [],
       lastObstacleTime: 0,
       roadMarkings: [],
-      lastRoadMarkingTime: 0
+      lastRoadMarkingTime: 0,
+      particles: [],
+      stars: []
     };
+
+    // Initialize stars
+    function initStars() {
+      game.stars = [];
+      for (let i = 0; i < 30; i++) {
+        game.stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2 + 0.5,
+          speed: Math.random() * 0.5 + 0.2,
+          opacity: Math.random() * 0.5 + 0.3
+        });
+      }
+    }
 
     function initCar() {
       const laneWidth = game.roadWidth / game.laneCount;
       game.carX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
-      game.carY = canvas.height - game.carHeight - 20;
+      game.carY = canvas.height - game.carHeight - 30;
+    }
+
+    function drawBackground() {
+      // Dark gradient background
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      bgGrad.addColorStop(0, 'rgba(20, 20, 40, 0.9)');
+      bgGrad.addColorStop(1, 'rgba(30, 30, 60, 0.9)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw stars
+      for (const star of game.stars) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fill();
+        
+        if (game.running) {
+          star.y += star.speed;
+          if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+          }
+        }
+      }
     }
 
     function drawRoad() {
-      ctx.fillStyle = '#555';
+      // Road gradient with glass effect
+      const roadGrad = ctx.createLinearGradient(game.roadX, 0, game.roadX + game.roadWidth, 0);
+      roadGrad.addColorStop(0, 'rgba(60, 60, 80, 0.8)');
+      roadGrad.addColorStop(0.5, 'rgba(80, 80, 100, 0.9)');
+      roadGrad.addColorStop(1, 'rgba(60, 60, 80, 0.8)');
+      
+      // Main road
+      ctx.fillStyle = roadGrad;
+      ctx.beginPath();
+      ctx.roundRect(game.roadX, 0, game.roadWidth, canvas.height, [0, 0, 0, 0]);
+      ctx.fill();
+
+      // Road shine effect
+      const shineGrad = ctx.createLinearGradient(game.roadX, 0, game.roadX + game.roadWidth, 0);
+      shineGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      shineGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.05)');
+      shineGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+      shineGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.05)');
+      shineGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = shineGrad;
       ctx.fillRect(game.roadX, 0, game.roadWidth, canvas.height);
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([20, 20]);
-      for (const marking of game.roadMarkings) {
-        ctx.beginPath();
-        ctx.moveTo(game.roadX + game.roadWidth / 2, marking.y);
-        ctx.lineTo(game.roadX + game.roadWidth / 2, marking.y + 20);
-        ctx.stroke();
+
+      // Lane markings with glow
+      const laneWidth = game.roadWidth / game.laneCount;
+      for (let i = 1; i < game.laneCount; i++) {
+        const x = game.roadX + i * laneWidth;
+        
+        for (const marking of game.roadMarkings) {
+          // Glow effect
+          ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+          ctx.shadowBlur = 8;
+          
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([25, 25]);
+          ctx.lineDashOffset = -marking.y;
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+          
+          ctx.shadowBlur = 0;
+        }
       }
       ctx.setLineDash([]);
+
+      // Road edges with glow
+      ctx.shadowColor = 'rgba(255, 150, 200, 0.8)';
+      ctx.shadowBlur = 15;
+      ctx.strokeStyle = 'rgba(255, 150, 200, 0.8)';
       ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(game.roadX, 0); ctx.lineTo(game.roadX, canvas.height); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(game.roadX + game.roadWidth, 0); ctx.lineTo(game.roadX + game.roadWidth, canvas.height); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(game.roadX, 0);
+      ctx.lineTo(game.roadX, canvas.height);
+      ctx.stroke();
+      
+      ctx.shadowColor = 'rgba(100, 200, 255, 0.8)';
+      ctx.beginPath();
+      ctx.moveTo(game.roadX + game.roadWidth, 0);
+      ctx.lineTo(game.roadX + game.roadWidth, canvas.height);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
     }
 
     function drawCar() {
-      ctx.fillStyle = '#4c3ce7';
-      ctx.fillRect(game.carX, game.carY, game.carWidth, game.carHeight);
-      ctx.fillStyle = '#3498db';
-      ctx.fillRect(game.carX + 5, game.carY + 5, game.carWidth - 10, game.carHeight * 0.3);
-      ctx.fillStyle = '#2c3e50';
-      ctx.fillRect(game.carX - 3, game.carY + 5, 5, game.carHeight * 0.2);
-      ctx.fillRect(game.carX + game.carWidth - 2, game.carY + 5, 5, game.carHeight * 0.2);
-      ctx.fillRect(game.carX - 3, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
-      ctx.fillRect(game.carX + game.carWidth - 2, game.carY + game.carHeight - game.carHeight * 0.25, 5, game.carHeight * 0.2);
+      const x = game.carX;
+      const y = game.carY;
+      const w = game.carWidth;
+      const h = game.carHeight;
+
+      ctx.save();
+      
+      // Car shadow
+      ctx.shadowColor = 'rgba(100, 150, 255, 0.5)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 5;
+
+      // Car body gradient
+      const bodyGrad = ctx.createLinearGradient(x, y, x + w, y + h);
+      bodyGrad.addColorStop(0, '#667eea');
+      bodyGrad.addColorStop(0.5, '#764ba2');
+      bodyGrad.addColorStop(1, '#667eea');
+
+      // Main body
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(x + 2, y + h * 0.15, w - 4, h * 0.7, 5);
+      ctx.fill();
+
+      // Car top/cabin
+      const cabinGrad = ctx.createLinearGradient(x, y, x, y + h * 0.5);
+      cabinGrad.addColorStop(0, 'rgba(150, 200, 255, 0.9)');
+      cabinGrad.addColorStop(1, 'rgba(100, 150, 255, 0.6)');
+      ctx.fillStyle = cabinGrad;
+      ctx.beginPath();
+      ctx.roundRect(x + w * 0.15, y + h * 0.25, w * 0.7, h * 0.35, 4);
+      ctx.fill();
+
+      // Windshield shine
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.roundRect(x + w * 0.2, y + h * 0.28, w * 0.3, h * 0.15, 2);
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+
+      // Wheels with glow
+      ctx.fillStyle = '#1a1a2e';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 5;
+      
+      // Front wheels
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y + h * 0.12, 8, h * 0.2, 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.roundRect(x + w - 4, y + h * 0.12, 8, h * 0.2, 2);
+      ctx.fill();
+      
+      // Rear wheels
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y + h * 0.68, 8, h * 0.2, 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.roundRect(x + w - 4, y + h * 0.68, 8, h * 0.2, 2);
+      ctx.fill();
+
+      // Headlights
+      ctx.shadowColor = 'rgba(255, 255, 150, 0.8)';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#ffffa0';
+      ctx.beginPath();
+      ctx.arc(x + w * 0.25, y + h * 0.1, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + w * 0.75, y + h * 0.1, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Taillights
+      ctx.shadowColor = 'rgba(255, 50, 50, 0.8)';
+      ctx.fillStyle = '#ff4444';
+      ctx.beginPath();
+      ctx.arc(x + w * 0.2, y + h * 0.9, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + w * 0.8, y + h * 0.9, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // Speed particles
+      if (game.running && game.speed > 4) {
+        for (let i = 0; i < 2; i++) {
+          game.particles.push({
+            x: x + w / 2 + (Math.random() - 0.5) * w,
+            y: y + h,
+            vx: (Math.random() - 0.5) * 2,
+            vy: Math.random() * 3 + 2,
+            life: 1,
+            size: Math.random() * 3 + 1
+          });
+        }
+      }
     }
 
     function drawObstacles() {
-      ctx.fillStyle = '#f39c12';
-      for (const o of game.obstacles) ctx.fillRect(o.x, o.y, o.width, o.height);
+      for (const o of game.obstacles) {
+        ctx.save();
+        
+        // Obstacle shadow
+        ctx.shadowColor = 'rgba(255, 100, 50, 0.5)';
+        ctx.shadowBlur = 15;
+
+        // Obstacle body gradient
+        const obsGrad = ctx.createLinearGradient(o.x, o.y, o.x + o.width, o.y + o.height);
+        obsGrad.addColorStop(0, '#ff6b35');
+        obsGrad.addColorStop(0.5, '#f7931e');
+        obsGrad.addColorStop(1, '#ff6b35');
+
+        ctx.fillStyle = obsGrad;
+        ctx.beginPath();
+        ctx.roundRect(o.x + 2, o.y + o.height * 0.1, o.width - 4, o.height * 0.8, 5);
+        ctx.fill();
+
+        // Obstacle window
+        ctx.fillStyle = 'rgba(50, 50, 80, 0.8)';
+        ctx.beginPath();
+        ctx.roundRect(o.x + o.width * 0.15, o.y + o.height * 0.2, o.width * 0.7, o.height * 0.35, 3);
+        ctx.fill();
+
+        // Window shine
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.beginPath();
+        ctx.roundRect(o.x + o.width * 0.2, o.y + o.height * 0.22, o.width * 0.3, o.height * 0.15, 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+        // Obstacle wheels
+        ctx.fillStyle = '#1a1a2e';
+        ctx.beginPath();
+        ctx.roundRect(o.x - 3, o.y + o.height * 0.15, 6, o.height * 0.18, 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(o.x + o.width - 3, o.y + o.height * 0.15, 6, o.height * 0.18, 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(o.x - 3, o.y + o.height * 0.67, 6, o.height * 0.18, 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(o.x + o.width - 3, o.y + o.height * 0.67, 6, o.height * 0.18, 2);
+        ctx.fill();
+
+        // Taillights (facing player)
+        ctx.shadowColor = 'rgba(255, 50, 50, 0.8)';
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#ff3333';
+        ctx.beginPath();
+        ctx.arc(o.x + o.width * 0.2, o.y + o.height * 0.92, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(o.x + o.width * 0.8, o.y + o.height * 0.92, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    function drawParticles() {
+      for (let i = game.particles.length - 1; i >= 0; i--) {
+        const p = game.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.03;
+
+        if (p.life <= 0) {
+          game.particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(150, 200, 255, ${p.life * 0.5})`;
+        ctx.fill();
+      }
     }
 
     function update() {
       if (!game.running) return;
+      
       const laneWidth = game.roadWidth / game.laneCount;
       const targetX = game.roadX + laneWidth * game.currentLane + laneWidth / 2 - game.carWidth / 2;
-      game.carX += (targetX - game.carX) * 0.1;
+      game.carX += (targetX - game.carX) * 0.15;
+      
       const now = Date.now();
 
-      if (now - game.lastRoadMarkingTime > 500) {
+      if (now - game.lastRoadMarkingTime > 400) {
         game.roadMarkings.push({ y: 0 });
         game.lastRoadMarkingTime = now;
       }
       for (const m of game.roadMarkings) m.y += game.speed;
       game.roadMarkings = game.roadMarkings.filter(m => m.y < canvas.height);
 
-      if (now - game.lastObstacleTime > 1500 - Math.min(game.score * 10, 1000)) {
+      if (now - game.lastObstacleTime > 1800 - Math.min(game.score * 8, 1200)) {
         const lane = Math.floor(Math.random() * game.laneCount);
-        const w = laneWidth * 0.8;
+        const w = laneWidth * 0.75;
         const x = game.roadX + lane * laneWidth + (laneWidth - w) / 2;
-        game.obstacles.push({ x, y: -50, width: w, height: game.carHeight * 0.8 });
+        game.obstacles.push({ 
+          x, 
+          y: -80, 
+          width: w, 
+          height: game.carHeight * 0.85
+        });
         game.lastObstacleTime = now;
       }
+
       for (const o of game.obstacles) {
         o.y += game.speed;
-        if (o.y + o.height > game.carY &&
-            o.y < game.carY + game.carHeight &&
-            o.x + o.width > game.carX &&
-            o.x < game.carX + game.carWidth)
+        
+        // Collision detection with some padding
+        const padding = 5;
+        if (o.y + o.height > game.carY + padding &&
+            o.y < game.carY + game.carHeight - padding &&
+            o.x + o.width > game.carX + padding &&
+            o.x < game.carX + game.carWidth - padding) {
           return gameOver();
+        }
       }
+      
       game.obstacles = game.obstacles.filter(o => o.y < canvas.height);
       game.score += 0.1;
       scoreElement.textContent = Math.floor(game.score);
-      game.speed = 3 + Math.floor(game.score / 10) * 0.2;
+      game.speed = 3 + Math.floor(game.score / 10) * 0.25;
+      speedDisplay.textContent = (game.speed / 3).toFixed(1) + 'x';
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
       drawRoad();
+      drawParticles();
       drawObstacles();
       drawCar();
     }
@@ -336,11 +975,13 @@ h1{
     function startGame() {
       game.running = true;
       playIcon.className = "fa-solid fa-pause";
+      playPauseBtn.style.animation = 'none';
     }
 
     function pauseGame() {
       game.running = false;
       playIcon.className = "fa-solid fa-play";
+      playPauseBtn.style.animation = 'pulseGlow 2s ease-in-out infinite';
     }
 
     function togglePlayPause() {
@@ -350,32 +991,44 @@ h1{
     function gameOver() {
       game.running = false;
       playIcon.className = "fa-solid fa-play";
+      playPauseBtn.style.animation = 'pulseGlow 2s ease-in-out infinite';
+      
       const finalScore = Math.floor(game.score);
       finalScoreElement.textContent = finalScore;
+      
       if (finalScore > topScore) {
         topScore = finalScore;
         localStorage.setItem('hydra_top_score', topScore);
         topScoreElement.textContent = topScore;
+        newRecordElement.style.display = 'block';
+      } else {
+        newRecordElement.style.display = 'none';
       }
+      
       gameOverScreen.style.display = 'flex';
     }
 
-    // Movement
     function moveLeft() {
       if (game.running && game.currentLane > 0) game.currentLane--;
     }
+    
     function moveRight() {
       if (game.running && game.currentLane < game.laneCount - 1) game.currentLane++;
     }
 
-    // Touch + Mouse
-   
+    // Event Listeners
     leftBtn.addEventListener('mousedown', moveLeft);
+    leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft(); });
     rightBtn.addEventListener('mousedown', moveRight);
+    rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveRight(); });
     playPauseBtn.addEventListener('click', togglePlayPause);
 
-    // Keyboard
     window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Escape') {
+        e.preventDefault();
+        togglePlayPause();
+        return;
+      }
       if (!game.running) return;
       if (['ArrowLeft', 'a', 'A'].includes(e.key)) moveLeft();
       if (['ArrowRight', 'd', 'D'].includes(e.key)) moveRight();
@@ -386,10 +1039,12 @@ h1{
       game.speed = 3;
       game.obstacles = [];
       game.roadMarkings = [];
+      game.particles = [];
       game.lastObstacleTime = 0;
       game.lastRoadMarkingTime = 0;
       game.currentLane = 1;
       scoreElement.textContent = '0';
+      speedDisplay.textContent = '1.0x';
       gameOverScreen.style.display = 'none';
       initCar();
       startGame();
@@ -402,9 +1057,12 @@ h1{
     });
 
     canvas.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // Initialize
+    initStars();
     initCar();
     loop();
-    pauseGame(); // Game paused on load
+    pauseGame();
   </script>
 </body>
 </html>
