@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Hydra Car Racing</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,9 +16,9 @@
 
     body {
       font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 75%, #16213e 100%);
       background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
+      animation: gradientShift 20s ease infinite;
       color: white;
       min-height: 100vh;
       display: flex;
@@ -36,9 +36,9 @@
       right: 0;
       bottom: 0;
       background: 
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+        radial-gradient(circle at 20% 80%, rgba(100, 200, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 100, 200, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(150, 100, 255, 0.05) 0%, transparent 40%);
       pointer-events: none;
       z-index: 0;
     }
@@ -52,95 +52,133 @@
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.5;
+      filter: blur(60px);
+      opacity: 0.4;
       pointer-events: none;
       z-index: 0;
     }
 
     .orb-1 {
-      width: 300px;
-      height: 300px;
-      background: rgba(255, 255, 255, 0.2);
-      top: -100px;
-      left: -100px;
-      animation: float1 8s ease-in-out infinite;
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(100, 200, 255, 0.3), rgba(150, 100, 255, 0.2));
+      top: -150px;
+      left: -150px;
+      animation: float1 12s ease-in-out infinite;
     }
 
     .orb-2 {
-      width: 200px;
-      height: 200px;
-      background: rgba(120, 200, 255, 0.3);
-      bottom: 10%;
-      right: -50px;
-      animation: float2 10s ease-in-out infinite;
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, rgba(255, 100, 200, 0.25), rgba(255, 150, 100, 0.2));
+      bottom: 5%;
+      right: -100px;
+      animation: float2 15s ease-in-out infinite;
     }
 
     .orb-3 {
-      width: 150px;
-      height: 150px;
-      background: rgba(255, 150, 200, 0.25);
-      top: 50%;
-      left: 10%;
-      animation: float3 12s ease-in-out infinite;
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, rgba(100, 255, 200, 0.2), rgba(100, 200, 255, 0.15));
+      top: 40%;
+      left: 5%;
+      animation: float3 18s ease-in-out infinite;
+    }
+
+    .orb-4 {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(135deg, rgba(255, 200, 100, 0.2), rgba(255, 100, 150, 0.15));
+      top: 20%;
+      right: 10%;
+      animation: float4 14s ease-in-out infinite;
     }
 
     @keyframes float1 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(30px, 30px) scale(1.1); }
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      33% { transform: translate(40px, 30px) scale(1.1) rotate(5deg); }
+      66% { transform: translate(-20px, 50px) scale(0.95) rotate(-3deg); }
     }
 
     @keyframes float2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-20px, -40px) scale(0.9); }
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(-40px, -60px) scale(0.9) rotate(-5deg); }
     }
 
     @keyframes float3 {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(40px, -20px) scale(1.05); }
+      50% { transform: translate(60px, -30px) scale(1.1); }
+    }
+
+    @keyframes float4 {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(-30px, 40px) scale(1.05) rotate(3deg); }
+    }
+
+    /* Header with glass effect */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 12px 0;
+      padding: 12px 25px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.15);
+      z-index: 10;
+      position: relative;
+    }
+
+    .header-logo {
+      font-size: 2rem;
+      animation: carBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes carBounce {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      50% { transform: translateY(-3px) rotate(5deg); }
     }
 
     h1 {
       text-align: center;
-      margin: 15px 0;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 700;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.9) 50%, #64c8ff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: 0 2px 20px rgba(255,255,255,0.3);
-      z-index: 10;
-      position: relative;
     }
 
     .game-container {
       position: relative;
       width: 95%;
-      max-width: 500px;
-      height: 70vh;
+      max-width: 480px;
+      height: 68vh;
       overflow: hidden;
-      border-radius: 30px;
+      border-radius: 35px;
       z-index: 10;
       
       /* Liquid Glass Effect */
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.25) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.05) 100%
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0.02) 100%
       );
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
       
       /* Glass border */
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
       box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 8px 32px rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-        0 20px 60px -10px rgba(0, 0, 0, 0.3),
-        0 0 100px rgba(255, 255, 255, 0.1);
+        0 25px 80px -15px rgba(0, 0, 0, 0.4),
+        0 0 120px rgba(100, 200, 255, 0.1);
     }
 
     .game-container::before {
@@ -149,13 +187,13 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 50%;
+      height: 40%;
       background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 0%,
         transparent 100%
       );
-      border-radius: 30px 30px 0 0;
+      border-radius: 35px 35px 0 0;
       pointer-events: none;
       z-index: 5;
     }
@@ -165,99 +203,187 @@
       display: block;
       width: 100%;
       height: 100%;
-      border-radius: 30px;
+      border-radius: 35px;
     }
 
     /* Glass UI Elements */
     .glass-panel {
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.15) 0%,
         rgba(255, 255, 255, 0.05) 100%
       );
-      backdrop-filter: blur(15px) saturate(150%);
-      -webkit-backdrop-filter: blur(15px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
       box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        0 4px 20px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
     }
 
     .score-container {
       position: absolute;
-      top: 15px;
-      left: 15px;
-      font-size: 0.9rem;
+      top: 12px;
+      left: 12px;
+      font-size: 0.85rem;
       font-weight: 600;
-      padding: 10px 18px;
+      padding: 10px 16px;
       z-index: 10;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .score-container::before {
-      content: '🏎️';
-      font-size: 1.1rem;
+    .score-container .icon {
+      font-size: 1rem;
     }
 
     .top-score {
       position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 0.9rem;
+      top: 12px;
+      right: 12px;
+      font-size: 0.85rem;
       font-weight: 600;
-      padding: 10px 18px;
+      padding: 10px 16px;
       z-index: 10;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .top-score::before {
-      content: '👑';
-      font-size: 1.1rem;
+    .top-score .icon {
+      font-size: 1rem;
+      animation: crownPulse 2s ease-in-out infinite;
     }
 
-    /* Speed indicator */
-    .speed-indicator {
+    @keyframes crownPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Stats panel */
+    .stats-panel {
       position: absolute;
-      bottom: 15px;
-      left: 15px;
-      font-size: 0.8rem;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      font-size: 0.75rem;
       font-weight: 500;
-      padding: 8px 15px;
+      padding: 10px 14px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .stat-item .stat-icon {
+      font-size: 0.9rem;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: #64c8ff;
+    }
+
+    /* Coin counter */
+    .coins-display {
+      position: absolute;
+      top: 55px;
+      left: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 8px 14px;
       z-index: 10;
       display: flex;
       align-items: center;
       gap: 6px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 180, 0, 0.1) 100%);
+      border: 1px solid rgba(255, 215, 0, 0.3);
     }
 
-    .speed-indicator::before {
-      content: '⚡';
+    .coins-display .coin-icon {
+      font-size: 1rem;
+      animation: coinSpin 3s linear infinite;
+    }
+
+    @keyframes coinSpin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    /* Combo display */
+    .combo-display {
+      position: absolute;
+      top: 55px;
+      right: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(255, 100, 150, 0.25) 0%, rgba(255, 50, 100, 0.15) 100%);
+      border: 1px solid rgba(255, 100, 150, 0.4);
+      animation: comboGlow 0.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes comboGlow {
+      from { box-shadow: 0 0 10px rgba(255, 100, 150, 0.3); }
+      to { box-shadow: 0 0 20px rgba(255, 100, 150, 0.5); }
+    }
+
+    /* Power-up indicator */
+    .powerup-indicator {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 20px;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(100, 255, 200, 0.3) 0%, rgba(50, 200, 150, 0.2) 100%);
+      border: 1px solid rgba(100, 255, 200, 0.5);
+      border-radius: 25px;
+      animation: powerupPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes powerupPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) scale(1.05); opacity: 0.9; }
     }
 
     .controls {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      max-width: 500px;
-      margin-top: 20px;
-      padding: 0 20px;
+      max-width: 480px;
+      margin-top: 18px;
+      padding: 0 15px;
       align-items: center;
       z-index: 10;
       position: relative;
     }
 
     .control-btn {
-      width: 75px;
-      height: 75px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: white;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -268,19 +394,19 @@
       /* Liquid Glass Button */
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.3) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.05) 100%
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 100%
       );
-      backdrop-filter: blur(15px) saturate(150%);
-      -webkit-backdrop-filter: blur(15px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
       box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.2),
         0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-        0 -2px 10px rgba(255, 255, 255, 0.1) inset;
+        0 -2px 10px rgba(255, 255, 255, 0.05) inset;
       
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .control-btn::before {
@@ -292,7 +418,7 @@
       height: 50%;
       background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.15) 0%,
         transparent 100%
       );
       border-radius: 50% 50% 0 0;
@@ -306,47 +432,53 @@
       left: 50%;
       width: 0;
       height: 0;
-      background: rgba(255, 255, 255, 0.3);
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       transition: width 0.3s, height 0.3s;
     }
 
     .control-btn:active {
-      transform: scale(0.92);
+      transform: scale(0.9);
       box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        0 4px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
     }
 
     .control-btn:active::after {
-      width: 100%;
-      height: 100%;
+      width: 120%;
+      height: 120%;
     }
 
     .control-btn i {
       position: relative;
       z-index: 2;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
     #playPauseBtn {
-      width: 85px;
-      height: 85px;
-      font-size: 2rem;
+      width: 80px;
+      height: 80px;
+      font-size: 1.8rem;
       background: linear-gradient(
         135deg,
-        rgba(100, 200, 255, 0.4) 0%,
-        rgba(150, 100, 255, 0.3) 50%,
-        rgba(255, 100, 200, 0.2) 100%
+        rgba(100, 200, 255, 0.35) 0%,
+        rgba(150, 100, 255, 0.25) 50%,
+        rgba(255, 100, 200, 0.15) 100%
       );
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      animation: pulseGlow 2s ease-in-out infinite;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      animation: pulseGlow 3s ease-in-out infinite;
     }
 
     @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 8px 32px rgba(100, 200, 255, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset; }
-      50% { box-shadow: 0 8px 40px rgba(150, 100, 255, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; }
+      0%, 100% { 
+        box-shadow: 0 8px 32px rgba(100, 200, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        border-color: rgba(100, 200, 255, 0.4);
+      }
+      50% { 
+        box-shadow: 0 8px 45px rgba(150, 100, 255, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+        border-color: rgba(150, 100, 255, 0.5);
+      }
     }
 
     .game-over {
@@ -360,38 +492,39 @@
       align-items: center;
       justify-content: center;
       z-index: 100;
-      border-radius: 30px;
+      border-radius: 35px;
       
       /* Frosted glass overlay */
       background: linear-gradient(
         135deg,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(50, 50, 80, 0.7) 100%
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(30, 30, 60, 0.8) 100%
       );
-      backdrop-filter: blur(30px) saturate(150%);
-      -webkit-backdrop-filter: blur(30px) saturate(150%);
+      backdrop-filter: blur(40px) saturate(150%);
+      -webkit-backdrop-filter: blur(40px) saturate(150%);
     }
 
     .game-over-content {
       text-align: center;
-      padding: 40px;
+      padding: 35px 40px;
       border-radius: 30px;
       background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(255, 255, 255, 0.05) 100%
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.04) 100%
       );
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+      animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 90%;
     }
 
     @keyframes slideUp {
       from {
         opacity: 0;
-        transform: translateY(30px) scale(0.95);
+        transform: translateY(40px) scale(0.9);
       }
       to {
         opacity: 1;
@@ -400,18 +533,52 @@
     }
 
     .game-over h2 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
+      font-size: 2rem;
+      margin-bottom: 8px;
       font-weight: 700;
-      background: linear-gradient(135deg, #ff6b6b, #ffa500);
+      background: linear-gradient(135deg, #ff6b6b, #ffa500, #ff6b6b);
+      background-size: 200% 200%;
+      animation: gradientText 2s ease infinite;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
+    @keyframes gradientText {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .game-over .stats-summary {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+    }
+
+    .stats-summary .stat {
+      text-align: center;
+    }
+
+    .stats-summary .stat-label {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stats-summary .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #64c8ff;
+    }
+
     .game-over p {
-      font-size: 1.3rem;
-      margin-bottom: 25px;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
       font-weight: 500;
       opacity: 0.9;
     }
@@ -419,13 +586,13 @@
     .game-over-buttons {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .restart-btn, .reset-btn {
       border: none;
-      padding: 15px 35px;
-      font-size: 1.1rem;
+      padding: 14px 32px;
+      font-size: 1rem;
       font-weight: 600;
       border-radius: 50px;
       cursor: pointer;
@@ -433,100 +600,178 @@
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .restart-btn {
       background: linear-gradient(
         135deg,
-        rgba(100, 200, 255, 0.6) 0%,
-        rgba(100, 150, 255, 0.5) 100%
+        rgba(100, 200, 255, 0.5) 0%,
+        rgba(100, 150, 255, 0.4) 100%
       );
       color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 8px 25px rgba(100, 150, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 25px rgba(100, 150, 255, 0.25);
     }
 
-    .restart-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(100, 150, 255, 0.4);
+    .restart-btn:hover, .restart-btn:active {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(100, 150, 255, 0.35);
     }
 
     .reset-btn {
       background: linear-gradient(
         135deg,
-        rgba(255, 100, 100, 0.5) 0%,
-        rgba(255, 80, 80, 0.4) 100%
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
       );
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 6px 20px rgba(255, 100, 100, 0.2);
-      font-size: 0.95rem;
-      padding: 12px 28px;
+      color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 0.85rem;
+      padding: 10px 24px;
     }
 
-    .reset-btn:hover {
+    .reset-btn:hover, .reset-btn:active {
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 100, 100, 0.3);
+      background: linear-gradient(135deg, rgba(255, 100, 100, 0.3) 0%, rgba(255, 80, 80, 0.2) 100%);
+      border-color: rgba(255, 100, 100, 0.4);
     }
 
     .new-record {
       display: none;
       font-size: 1rem;
       color: #ffd700;
-      margin-bottom: 15px;
-      animation: bounce 0.6s ease infinite;
+      margin-bottom: 10px;
+      animation: recordBounce 0.8s ease infinite;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+    @keyframes recordBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    /* Countdown overlay */
+    .countdown-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      border-radius: 35px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .countdown-number {
+      font-size: 6rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 0 40px rgba(100, 200, 255, 0.8);
+      animation: countdownPop 1s ease-out;
+    }
+
+    @keyframes countdownPop {
+      0% { transform: scale(2); opacity: 0; }
+      50% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
     }
 
     @media (max-width: 500px) {
+      .header {
+        padding: 10px 20px;
+        margin: 8px 0;
+      }
       h1 {
-        font-size: 1.6rem;
-        margin: 10px 0;
-      }
-      .controls {
-        margin-top: 15px;
-      }
-      .control-btn {
-        width: 65px;
-        height: 65px;
         font-size: 1.5rem;
       }
+      .header-logo {
+        font-size: 1.6rem;
+      }
+      .controls {
+        margin-top: 12px;
+        padding: 0 10px;
+      }
+      .control-btn {
+        width: 62px;
+        height: 62px;
+        font-size: 1.4rem;
+      }
       #playPauseBtn {
-        width: 75px;
-        height: 75px;
+        width: 70px;
+        height: 70px;
       }
       .game-container {
-        height: 62vh;
-        border-radius: 25px;
+        height: 60vh;
+        border-radius: 28px;
       }
       .game-over-content {
-        padding: 30px;
-        margin: 0 20px;
+        padding: 25px 30px;
+        margin: 0 15px;
       }
       .game-over h2 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+      }
+      .stats-summary {
+        gap: 15px;
       }
     }
 
     .footer {
       text-align: center;
-      margin-top: 15px;
-      margin-bottom: 10px;
-      max-width: 500px;
-      padding: 0 20px;
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.7);
+      margin-top: 12px;
+      margin-bottom: 8px;
+      max-width: 480px;
+      padding: 8px 20px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
       z-index: 10;
       position: relative;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
     }
 
     .footer a {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.7);
       text-decoration: none;
+    }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      padding: 12px 25px;
+      background: linear-gradient(135deg, rgba(100, 255, 150, 0.3) 0%, rgba(50, 200, 100, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(100, 255, 150, 0.4);
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 1000;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.warning {
+      background: linear-gradient(135deg, rgba(255, 200, 100, 0.3) 0%, rgba(255, 150, 50, 0.2) 100%);
+      border-color: rgba(255, 200, 100, 0.4);
     }
   </style>
 </head>
@@ -535,20 +780,77 @@
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
 
-  <h1>🏁 Hydra Racing</h1>
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <div class="header">
+    <span class="header-logo">🏎️</span>
+    <h1>HYDRA RACING</h1>
+  </div>
 
   <div class="game-container">
-    <div class="score-container glass-panel">Score: <span id="score">0</span></div>
-    <div class="top-score glass-panel">Best: <span id="topScore">0</span></div>
-    <div class="speed-indicator glass-panel">Speed: <span id="speedDisplay">1x</span></div>
+    <div class="score-container glass-panel">
+      <span class="icon">🏁</span>
+      <span>Score: <span id="score">0</span></span>
+    </div>
+    <div class="top-score glass-panel">
+      <span class="icon">👑</span>
+      <span>Best: <span id="topScore">0</span></span>
+    </div>
+    <div class="coins-display glass-panel">
+      <span class="coin-icon">🪙</span>
+      <span id="coins">0</span>
+    </div>
+    <div class="combo-display glass-panel" id="comboDisplay">
+      <span>🔥</span>
+      <span>x<span id="comboCount">0</span></span>
+    </div>
+    <div class="powerup-indicator glass-panel" id="powerupIndicator">
+      <span id="powerupIcon">🛡️</span>
+      <span id="powerupText">Shield Active</span>
+      <span id="powerupTimer">5s</span>
+    </div>
+    <div class="stats-panel glass-panel">
+      <div class="stat-item">
+        <span class="stat-icon">⚡</span>
+        <span>Speed: <span class="stat-value" id="speedDisplay">1.0x</span></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon">📏</span>
+        <span>Distance: <span class="stat-value" id="distanceDisplay">0m</span></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon">🚗</span>
+        <span>Dodged: <span class="stat-value" id="dodgedDisplay">0</span></span>
+      </div>
+    </div>
     <canvas id="gameCanvas"></canvas>
+
+    <!-- Countdown overlay -->
+    <div class="countdown-overlay" id="countdownOverlay">
+      <div class="countdown-number" id="countdownNumber">3</div>
+    </div>
 
     <div class="game-over" id="gameOverScreen">
       <div class="game-over-content">
         <h2>💥 Game Over!</h2>
-        <p class="new-record" id="newRecord">🎉 New Record!</p>
-        <p>Your Score: <span id="finalScore">0</span></p>
+        <p class="new-record" id="newRecord">🎉 NEW HIGH SCORE! 🎉</p>
+        <div class="stats-summary">
+          <div class="stat">
+            <div class="stat-value" id="finalScore">0</div>
+            <div class="stat-label">Score</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="finalCoins">0</div>
+            <div class="stat-label">Coins</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="finalDistance">0m</div>
+            <div class="stat-label">Distance</div>
+          </div>
+        </div>
         <div class="game-over-buttons">
           <button class="restart-btn" id="restartBtn">
             <i class="fa-solid fa-rotate-right"></i> Play Again
@@ -567,7 +869,7 @@
     <div class="control-btn" id="rightBtn"><i class="fa-solid fa-chevron-right"></i></div>
   </div>
 
-  <p class="footer">&copy; 2025 Zayan. All Rights Reserved</p>
+  <p class="footer">© 2025 Zayan • Hydra Racing v2.0</p>
 
   <script>
     const canvas = document.getElementById('gameCanvas');
